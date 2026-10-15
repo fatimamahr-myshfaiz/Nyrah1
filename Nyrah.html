@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nyrah's Academy">
+  <title>Nyrah's Learning Academy: Math, Reading, Vocab, Public Speaking &amp; Target Rewards Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --fg: #f8fafc;
+      --border: #334155;
+      --muted: #94a3b8;
+      --target-red: #cc0000;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --fg: #0f172a;
+        --border: #e2e8f0;
+        --muted: #64748b;
+      }
+    }
+    @keyframes pop { 50% { transform: scale(1.15); } }
+    @keyframes wiggle { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(700px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(220, 38, 38, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(220, 38, 38, 0.8); }
+    }
+    .pop { animation: pop 0.35s ease-out; }
+    .wiggle { animation: wiggle 0.4s ease-in-out; }
+    .pulse-glow { animation: pulseGlow 2s infinite; }
+    .confetti-piece { position: absolute; width: 12px; height: 16px; animation: confettiFall 3.2s linear infinite; z-index: 60; border-radius: 3px; }
+    input::-webkit-inner-spin-button, input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+    input, textarea, select { outline: none; }
+
+    /* Print styling for Nyrah's Official Certificate */
+    @media print {
+      body * { visibility: hidden; }
+      #certificatePrintArea, #certificatePrintArea * { visibility: visible; }
+      #certificatePrintArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 40px;
+        background: white !important;
+        color: black !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[var(--bg)] text-[var(--fg)] p-2 md:p-6 min-h-screen flex flex-col items-center select-none font-sans">
+
+  <!-- Main Academy Container -->
+  <div class="max-w-5xl w-full bg-[var(--card)] border border-[var(--border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col mb-8 relative" id="portalContainer">
+    
+    <!-- Top Navigation Header -->
+    <header class="px-6 py-4 bg-[var(--card)] border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-13 h-13 rounded-2xl bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 text-white flex items-center justify-center text-3xl shadow-lg p-2.5">
+          &#11088;
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-black text-[var(--fg)] flex items-center gap-2 flex-wrap">
+            <span>Nyrah's Learning Academy</span>
+            <span class="text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full bg-red-600 text-white tracking-wider flex items-center gap-1 shadow-sm">
+              <span>&#127919;</span> 10 A's = $10 Target Card
+            </span>
+          </h1>
+          <p class="text-xs text-[var(--muted)] font-medium">6-Year-Old Super Scholar &bull; Addition, Subtraction, Multiplication, Vocab, Reading &amp; Speaking</p>
+        </div>
+      </div>
+
+      <!-- Action Badges -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+        <button id="btnTopTargetRewards" class="px-3.5 py-1.5 bg-red-600/15 border-2 border-red-500/40 text-red-500 rounded-xl text-xs font-black flex items-center gap-1.5 shadow hover:scale-105 transition-transform pulse-glow">
+          <span class="text-base">&#127919;</span> Target Bank: <span id="targetCreditBadge" class="font-black text-red-500">$0</span>
+        </button>
+        <button id="btnOpenHistory" class="px-3 py-1.5 bg-blue-500/15 border border-blue-500/30 text-blue-400 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow hover:scale-105 transition-transform">
+          <span>&#128202;</span> Test History (<span id="testCountBadge">0</span>)
+        </button>
+        <button id="btnOpenReportCard" class="px-3 py-1.5 bg-amber-500/15 border border-amber-500/30 text-amber-400 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow hover:scale-105 transition-transform">
+          <span>&#127942;</span> Report Card
+        </button>
+        <div class="flex items-center gap-1.5 bg-[var(--bg)] px-3 py-1.5 rounded-xl border border-[var(--border)] text-xs font-bold">
+          <span class="text-amber-400 text-base">&#11088;</span>
+          <span id="academyStars" class="font-mono font-black">0</span> Stars
+        </div>
+        <button id="btnParentHub" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow">
+          <span>&#9881;&#65039;</span> Parent / Uncle Studio
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Bar (6 Pillars: Math, Comprehension, Vocab, Public Speaking, Target Rewards) -->
+    <nav class="bg-[var(--bg)] px-4 py-2.5 border-b border-[var(--border)] flex items-center gap-2 overflow-x-auto" id="subjectNav">
+      <button data-tab="math" class="tab-btn px-4 py-2 rounded-xl text-xs font-black bg-blue-600 text-white shadow-md transition-all flex items-center gap-2 whitespace-nowrap">
+        <span>&#10133;&#10134;&#10006;</span> Math Arena (<span id="gradePillMath" class="text-emerald-300">A+</span>)
+      </button>
+      <button data-tab="reading" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-[var(--muted)] hover:text-[var(--fg)] transition-all flex items-center gap-2 whitespace-nowrap">
+        <span>&#128214;</span> Comprehension (<span id="gradePillReading" class="text-emerald-300">A+</span>)
+      </button>
+      <button data-tab="vocab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-[var(--muted)] hover:text-[var(--fg)] transition-all flex items-center gap-2 whitespace-nowrap">
+        <span>&#129504;</span> New Vocabulary (<span id="gradePillVocab" class="text-emerald-300">A+</span>)
+      </button>
+      <button data-tab="speaking" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-[var(--muted)] hover:text-[var(--fg)] transition-all flex items-center gap-2 whitespace-nowrap">
+        <span>&#127908;</span> Public Speaking (<span id="gradePillSpeaking" class="text-emerald-300">A+</span>)
+      </button>
+      <button data-tab="target" class="tab-btn px-4 py-2 rounded-xl text-xs font-black text-red-500 hover:text-white hover:bg-red-600 border border-red-500/40 transition-all flex items-center gap-2 whitespace-nowrap">
+        <span>&#127919;</span> Target Rewards (<span id="targetTabAmt">$0</span>)
+      </button>
+    </nav>
+
+
+    <!-- ================= SUBJECT 1: MATH ARENA (ADDITION, SUBTRACTION, MULTIPLICATION) ================= -->
+    <section id="sect-math" class="subject-panel p-6 md:p-8 flex flex-col">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-[var(--border)]">
+        <div>
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <span class="text-xs uppercase font-black text-blue-400 tracking-wider">Math Unit:</span>
+            <div class="inline-flex rounded-xl bg-[var(--bg)] p-1 border border-[var(--border)]" id="mathModeGroup">
+              <button data-mode="add" class="math-subtab px-3.5 py-1.5 rounded-lg text-xs font-black bg-blue-600 text-white shadow transition-all">
+                &#10133; Addition
+              </button>
+              <button data-mode="sub" class="math-subtab px-3.5 py-1.5 rounded-lg text-xs font-bold text-[var(--muted)] hover:text-[var(--fg)] transition-all">
+                &#10134; Subtraction
+              </button>
+              <button data-mode="mult" class="math-subtab px-3.5 py-1.5 rounded-lg text-xs font-bold text-[var(--muted)] hover:text-[var(--fg)] transition-all">
+                &#10006; Multiplication
+              </button>
+            </div>
+          </div>
+          <p class="text-xs text-[var(--muted)]" id="mathSubDesc">Count visual items or add the numbers together to find the sum!</p>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-sm font-bold bg-[var(--bg)] px-3 py-1.5 rounded-xl border border-[var(--border)]">
+          <span class="animate-pulse">&#9201;</span>
+          <span id="mathTimer">00:00</span>
+        </div>
+      </div>
+
+      <!-- ================= SUB-PANEL 1A: ADDITION ADVENTURE ================= -->
+      <div id="subpanel-add" class="math-view flex flex-col md:flex-row gap-8 items-center justify-between min-h-[380px]">
+        <div class="w-full md:w-1/2 flex flex-col items-center">
+          
+          <!-- Addition Level Selector -->
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-[10px] uppercase font-bold text-[var(--muted)]">Level:</span>
+            <button class="add-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-blue-600 text-white" data-lvl="1">1 to 10 (Fun Visuals)</button>
+            <button class="add-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]" data-lvl="2">1 to 20 (Ten Frames)</button>
+            <button class="add-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]" data-lvl="3">Tens &amp; Teens</button>
+          </div>
+
+          <!-- Addition Card -->
+          <div class="bg-[var(--bg)] p-6 rounded-3xl border-2 border-[var(--border)] shadow-inner w-full max-w-[340px] text-center select-none">
+            
+            <!-- Visual Counter Display -->
+            <div id="addVisualBox" class="mb-4 p-3 bg-[var(--card)] rounded-2xl border border-[var(--border)] min-h-[70px] flex flex-col items-center justify-center gap-1">
+              <!-- Visual dots or emoji items rendered here -->
+            </div>
+
+            <div class="flex items-center justify-center gap-4 text-4xl font-black font-mono my-3">
+              <span id="addNum1" class="text-blue-400">4</span>
+              <span class="text-emerald-400 font-bold">&#10133;</span>
+              <span id="addNum2" class="text-amber-400">3</span>
+              <span class="text-[var(--muted)] font-bold">&#61;</span>
+              <input type="number" id="inpAddAns" placeholder="?" class="w-20 text-center font-mono text-3xl font-black bg-[var(--card)] border-2 border-blue-500 rounded-2xl p-1 text-blue-400" />
+            </div>
+
+            <!-- Kid Touch Keypad (0-9, Clear, Enter) -->
+            <div class="grid grid-cols-4 gap-1.5 mt-4 pt-3 border-t border-[var(--border)]">
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="1">1</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="2">2</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="3">3</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="4">4</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="5">5</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="6">6</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="7">7</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="8">8</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="9">9</button>
+              <button class="numpad-btn p-2 rounded-xl bg-[var(--card)] hover:bg-blue-600 hover:text-white font-mono font-bold text-sm" data-val="0">0</button>
+              <button class="numpad-clear p-2 rounded-xl bg-rose-500/20 text-rose-400 font-bold text-xs" title="Clear">⌫ Del</button>
+              <button id="btnNumpadEnterAdd" class="p-2 rounded-xl bg-emerald-600 text-white font-black text-xs" title="Check Answer">✔ Go</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 mt-4">
+            <button id="btnAddCheck" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-2">
+              <span>&#10024;</span> Check Answer
+            </button>
+            <button id="btnAddNext" class="hidden px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5">
+              <span>Next Addition</span> &rarr;
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full md:w-1/2 flex flex-col justify-between h-full min-h-[300px]">
+          <div class="bg-[var(--card)] border-2 border-blue-500/30 rounded-2xl p-6 shadow-xl">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-2">&#129417; Coach Owl's Addition Tip</span>
+            <p id="addCoachMsg" class="text-sm leading-relaxed mb-4">
+              Count all the items together! Start with the bigger number and count up!
+            </p>
+            <div id="addSpdBadge" class="hidden p-3 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold"></div>
+          </div>
+          <div class="flex items-center justify-between text-xs text-[var(--muted)] mt-6">
+            <span id="addProgress">Problem 1 of 5</span>
+            <button id="btnAddRandom" class="text-blue-400 hover:underline font-semibold">&#128260; Random Addition</button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ================= SUB-PANEL 1B: SUBTRACTION SAFARI ================= -->
+      <div id="subpanel-sub" class="math-view flex flex-col md:flex-row gap-8 items-center justify-between min-h-[380px] hidden">
+        <div class="w-full md:w-1/2 flex flex-col items-center">
+          
+          <!-- Subtraction Level Selector -->
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-[10px] uppercase font-bold text-[var(--muted)]">Level:</span>
+            <button class="sub-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-amber-600 text-white" data-lvl="1">Within 10 (Take Away Visuals)</button>
+            <button class="sub-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]" data-lvl="2">Within 20</button>
+          </div>
+
+          <!-- Subtraction Card -->
+          <div class="bg-[var(--bg)] p-6 rounded-3xl border-2 border-[var(--border)] shadow-inner w-full max-w-[340px] text-center select-none">
+            
+            <!-- Visual Counter Display -->
+            <div id="subVisualBox" class="mb-4 p-3 bg-[var(--card)] rounded-2xl border border-[var(--border)] min-h-[70px] flex flex-col items-center justify-center gap-1">
+              <!-- Visual dots or crossed-out emoji items rendered here -->
+            </div>
+
+            <div class="flex items-center justify-center gap-4 text-4xl font-black font-mono my-3">
+              <span id="subNum1" class="text-amber-400">7</span>
+              <span class="text-rose-400 font-bold">&#10134;</span>
+              <span id="subNum2" class="text-purple-400">3</span>
+              <span class="text-[var(--muted)] font-bold">&#61;</span>
+              <input type="number" id="inpSubAns" placeholder="?" class="w-20 text-center font-mono text-3xl font-black bg-[var(--card)] border-2 border-amber-500 rounded-2xl p-1 text-amber-400" />
+            </div>
+
+            <!-- Kid Touch Keypad -->
+            <div class="grid grid-cols-4 gap-1.5 mt-4 pt-3 border-t border-[var(--border)]">
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="1">1</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="2">2</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="3">3</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="4">4</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="5">5</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="6">6</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="7">7</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="8">8</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="9">9</button>
+              <button class="numpad-sub-btn p-2 rounded-xl bg-[var(--card)] hover:bg-amber-600 hover:text-white font-mono font-bold text-sm" data-val="0">0</button>
+              <button class="numpad-sub-clear p-2 rounded-xl bg-rose-500/20 text-rose-400 font-bold text-xs">⌫ Del</button>
+              <button id="btnNumpadEnterSub" class="p-2 rounded-xl bg-emerald-600 text-white font-black text-xs">✔ Go</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 mt-4">
+            <button id="btnSubCheck" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-2">
+              <span>&#10024;</span> Check Subtraction
+            </button>
+            <button id="btnSubNext" class="hidden px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5">
+              <span>Next Problem</span> &rarr;
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full md:w-1/2 flex flex-col justify-between h-full min-h-[300px]">
+          <div class="bg-[var(--card)] border-2 border-amber-500/30 rounded-2xl p-6 shadow-xl">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400 block mb-2">&#129417; Coach Owl's Subtraction Tip</span>
+            <p id="subCoachMsg" class="text-sm leading-relaxed mb-4">
+              You start with <b>7 balloons</b>. Take away <b>3</b>. How many are left over?
+            </p>
+            <div id="subSpdBadge" class="hidden p-3 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold"></div>
+          </div>
+          <div class="flex items-center justify-between text-xs text-[var(--muted)] mt-6">
+            <span id="subProgress">Problem 1 of 5</span>
+            <button id="btnSubRandom" class="text-amber-400 hover:underline font-semibold">&#128260; Random Subtraction</button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ================= SUB-PANEL 1C: MULTIPLICATION WONDER ================= -->
+      <div id="subpanel-mult" class="math-view flex flex-col md:flex-row gap-8 items-center justify-between min-h-[380px] hidden">
+        <div class="w-full md:w-1/2 flex flex-col items-center">
+          
+          <!-- Multiplication Times Table Selector for 6yo -->
+          <div class="flex items-center gap-1.5 mb-4 flex-wrap justify-center">
+            <span class="text-[10px] uppercase font-bold text-[var(--muted)]">Table:</span>
+            <button class="mult-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-purple-600 text-white" data-table="2">&times; 2s (Doubles)</button>
+            <button class="mult-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]" data-table="5">&times; 5s (Nickel Count)</button>
+            <button class="mult-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]" data-table="10">&times; 10s (Dime Count)</button>
+            <button class="mult-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]" data-table="3">&times; 3s</button>
+          </div>
+
+          <!-- Multiplication Card -->
+          <div class="bg-[var(--bg)] p-6 rounded-3xl border-2 border-[var(--border)] shadow-inner w-full max-w-[340px] text-center select-none">
+            
+            <!-- Visual Group Display (Equal Groups Concept) -->
+            <div id="multVisualBox" class="mb-4 p-3 bg-[var(--card)] rounded-2xl border border-[var(--border)] min-h-[70px] flex flex-wrap items-center justify-center gap-2">
+              <!-- Visual group containers rendered here -->
+            </div>
+
+            <div class="flex items-center justify-center gap-4 text-4xl font-black font-mono my-3">
+              <span id="multNum1" class="text-purple-400">3</span>
+              <span class="text-blue-400 font-bold">&#10006;</span>
+              <span id="multNum2" class="text-emerald-400">2</span>
+              <span class="text-[var(--muted)] font-bold">&#61;</span>
+              <input type="number" id="inpMultAns" placeholder="?" class="w-20 text-center font-mono text-3xl font-black bg-[var(--card)] border-2 border-purple-500 rounded-2xl p-1 text-purple-400" />
+            </div>
+
+            <!-- Kid Touch Keypad -->
+            <div class="grid grid-cols-4 gap-1.5 mt-4 pt-3 border-t border-[var(--border)]">
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="1">1</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="2">2</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="3">3</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="4">4</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="5">5</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="6">6</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="7">7</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="8">8</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="9">9</button>
+              <button class="numpad-mult-btn p-2 rounded-xl bg-[var(--card)] hover:bg-purple-600 hover:text-white font-mono font-bold text-sm" data-val="0">0</button>
+              <button class="numpad-mult-clear p-2 rounded-xl bg-rose-500/20 text-rose-400 font-bold text-xs">⌫ Del</button>
+              <button id="btnNumpadEnterMult" class="p-2 rounded-xl bg-emerald-600 text-white font-black text-xs">✔ Go</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 mt-4">
+            <button id="btnMultCheck" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 active:scale-95 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-2">
+              <span>&#10024;</span> Check Multiplication
+            </button>
+            <button id="btnMultNext" class="hidden px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5">
+              <span>Next Problem</span> &rarr;
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full md:w-1/2 flex flex-col justify-between h-full min-h-[300px]">
+          <div class="bg-[var(--card)] border-2 border-purple-500/30 rounded-2xl p-6 shadow-xl">
+            <span class="text-xs font-bold uppercase tracking-wider text-purple-400 block mb-2">&#129417; Coach Owl's Multiplication Secret</span>
+            <p id="multCoachMsg" class="text-sm leading-relaxed mb-4">
+              Multiplication means <b>Equal Groups</b>! Look at the visual boxes: <b>3 groups of 2 stars</b> = 2 + 2 + 2 = <b>6</b>!
+            </p>
+            <div id="multSpdBadge" class="hidden p-3 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold"></div>
+          </div>
+          <div class="flex items-center justify-between text-xs text-[var(--muted)] mt-6">
+            <span id="multProgress">Problem 1 of 5</span>
+            <button id="btnMultRandom" class="text-purple-400 hover:underline font-semibold">&#128260; Random Multiplication</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= SUBJECT 2: READING COMPREHENSION ================= -->
+    <section id="sect-reading" class="subject-panel p-6 md:p-8 flex flex-col hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-2 border-b border-[var(--border)]">
+        <div>
+          <h2 class="text-lg font-black text-purple-400 flex items-center gap-2">
+            <span>&#128214; Story Time &amp; Reading Comprehension</span>
+          </h2>
+          <p class="text-xs text-[var(--muted)]">Listen or read the fun story, answer 3 questions, and earn an A+ for Target!</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btnStorySelectPrev" class="px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-xs font-bold hover:bg-[var(--border)]">&larr; Story</button>
+          <button id="btnStorySelectNext" class="px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-xl text-xs font-bold hover:bg-[var(--border)]">Next Story &rarr;</button>
+          <button id="btnReadAloud" class="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow transition-all">
+            <span>&#128266;</span> Read Aloud to Nyrah
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Story Text Card -->
+        <div class="bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl p-6 text-sm leading-relaxed max-h-[420px] overflow-y-auto">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] uppercase font-bold text-purple-400 tracking-wider" id="storyLevelBadge">Level 1 Story</span>
+            <span class="text-xs text-[var(--muted)] font-mono" id="storyNumberBadge">Story 1 of 3</span>
+          </div>
+          <h3 class="font-black text-xl text-[var(--fg)] mb-3" id="readTitle">Bella the Puppy's Rainbow Day</h3>
+          <div class="text-[var(--fg)] space-y-3 font-medium text-base" id="readPassage">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Quiz Card -->
+        <div class="flex flex-col justify-between" id="readQuizBox">
+          <div class="bg-[var(--card)] border-2 border-purple-500/30 rounded-2xl p-6 mb-4 shadow">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-black uppercase tracking-wider text-purple-400 block" id="qNumBadge">Question 1 of 3</span>
+              <span class="text-xs font-bold text-emerald-400" id="readingStarsEarned">+1 Star / Question</span>
+            </div>
+            <p class="text-base font-bold text-[var(--fg)] mb-4" id="quizQuestionText">What did Bella see in the sky after the rain?</p>
+            <div class="space-y-3" id="quizOptions"></div>
+            <div id="readQuizFeedback" class="hidden mt-4 p-3 rounded-xl text-xs font-bold"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= SUBJECT 3: VOCABULARY BUILDER ================= -->
+    <section id="sect-vocab" class="subject-panel p-6 md:p-8 flex flex-col hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-2 border-b border-[var(--border)]">
+        <div>
+          <h2 class="text-lg font-black text-emerald-400 flex items-center gap-2">
+            <span>&#129504; Nyrah's Power Vocabulary &amp; Word Detective</span>
+          </h2>
+          <p class="text-xs text-[var(--muted)]">Learn awesome words with kid-friendly definitions, audio voice, and fun quizzes!</p>
+        </div>
+        <button id="btnVocabSpeak" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
+          <span>&#128266;</span> Hear Word &amp; Meaning
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Flashcard View -->
+        <div class="bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between min-h-[340px]">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs uppercase font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10" id="vWordPart">Adjective</span>
+              <span class="text-xs text-[var(--muted)] font-mono" id="vIndex">1 / 8</span>
+            </div>
+            <h3 class="text-4xl font-black text-[var(--fg)] mb-3 tracking-tight" id="vWord">Curious</h3>
+            <p class="text-base text-[var(--muted)] mb-4 leading-relaxed font-medium" id="vDef">
+              Always wanting to ask questions, explore, and learn new things!
+            </p>
+            <div class="p-3.5 bg-[var(--card)] rounded-xl border border-[var(--border)] text-sm italic text-emerald-300 font-medium" id="vExample">
+              "Curious Nyrah peeked inside the mystery gift box with a big smile."
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mt-6">
+            <button id="btnPrevWord" class="flex-1 py-2.5 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--border)] text-xs font-bold">&larr; Previous Word</button>
+            <button id="btnNextWord" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">Next Word &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Word Detective Quiz -->
+        <div class="bg-[var(--card)] border-2 border-emerald-500/30 rounded-2xl p-6 shadow flex flex-col justify-between min-h-[340px]">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 block">&#128269; Word Detective Challenge</span>
+            <p class="text-sm font-semibold text-[var(--fg)] mb-4" id="vChallengePrompt">Which word means: <b>"Wanting to explore and ask questions"</b>?</p>
+            <div class="space-y-3" id="vocabQuizChoices"></div>
+            <div id="vocabFeedback" class="hidden mt-4 p-3 rounded-xl text-xs font-bold"></div>
+          </div>
+          <div class="text-[11px] text-[var(--muted)] font-medium pt-3 border-t border-[var(--border)] mt-4">
+            Master 5 detective questions to score an <b>A+ Grade</b> on your official Target report!
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= SUBJECT 4: PUBLIC SPEAKING ARENA ================= -->
+    <section id="sect-speaking" class="subject-panel p-6 md:p-8 flex flex-col hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-2 border-b border-[var(--border)]">
+        <div>
+          <h2 class="text-lg font-black text-rose-400 flex items-center gap-2">
+            <span>&#127908; Public Speaking &amp; Presentation Studio</span>
+          </h2>
+          <p class="text-xs text-[var(--muted)]">Show &amp; Tell topics &bull; Superhero speaking rules &bull; Fun tongue twisters &bull; Speech timer</p>
+        </div>
+        <button id="btnNewSpeechTopic" class="px-3.5 py-1.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-bold hover:bg-rose-500/30">
+          &#128161; New Speech Topic
+        </button>
+      </div>
+
+      <!-- Superhero Speaking Rules Banner -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+        <div class="p-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold">🦸‍♀️</div>
+          <div>
+            <div class="text-xs font-black text-[var(--fg)]">Rule 1: Stand Tall</div>
+            <div class="text-[10px] text-[var(--muted)]">Like a superhero with a warm smile!</div>
+          </div>
+        </div>
+        <div class="p-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold">🗣️</div>
+          <div>
+            <div class="text-xs font-black text-[var(--fg)]">Rule 2: Loud &amp; Clear</div>
+            <div class="text-[10px] text-[var(--muted)]">Speak proudly so everyone can hear!</div>
+          </div>
+        </div>
+        <div class="p-3 bg-[var(--bg)] border border-[var(--border)] rounded-2xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold">👀</div>
+          <div>
+            <div class="text-xs font-black text-[var(--fg)]">Rule 3: Eye Contact</div>
+            <div class="text-[10px] text-[var(--muted)]">Look at your family and friends!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Left: Speech Prompts & Tongue Twisters -->
+        <div class="bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <span class="text-xs uppercase font-bold text-rose-400 mb-1 block">&#127908; Today's Show &amp; Tell Mission:</span>
+            <h3 class="text-base font-black text-[var(--fg)] mb-2" id="speechTopicTitle">Show &amp; Tell: My Favorite Thing</h3>
+            <p class="text-xs text-[var(--muted)] mb-4 leading-relaxed" id="speechTopicPrompt">
+              "Hold up your favorite toy, book, or special item! Tell us: 1) What is it? 2) Where did you get it? 3) Why do you love it so much?"
+            </p>
+
+            <div class="mt-4 pt-3 border-t border-[var(--border)]">
+              <span class="text-xs uppercase font-bold text-amber-400 mb-1 block">&#128523; Tongue Twister Warmup:</span>
+              <p class="text-sm font-bold text-[var(--fg)] italic mb-2" id="twisterText">
+                "Red lorry, yellow lorry, red lorry, yellow lorry!"
+              </p>
+              <div class="flex items-center gap-2">
+                <button id="btnListenTwister" class="px-3 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-xs font-bold hover:bg-amber-500/30">
+                  <span>&#128266;</span> Hear Twister
+                </button>
+                <button id="btnNextTwister" class="px-3 py-1 bg-[var(--card)] border border-[var(--border)] rounded-lg text-xs font-bold">
+                  Next Twister &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Speech Timer & Recorder -->
+        <div class="bg-[var(--card)] border-2 border-rose-500/30 rounded-2xl p-6 shadow flex flex-col justify-between items-center text-center">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-2 block">&#9201; Speech Presentation Timer</span>
+            
+            <div class="flex items-center justify-center gap-2 my-2">
+              <button class="speech-len-btn px-3 py-1 rounded-lg text-xs font-black bg-rose-600 text-white" data-sec="30">30 Seconds</button>
+              <button class="speech-len-btn px-3 py-1 rounded-lg text-xs font-bold bg-[var(--bg)] text-[var(--muted)]" data-sec="60">60 Seconds</button>
+            </div>
+
+            <div class="text-6xl font-mono font-black text-rose-400 my-4 tracking-wider" id="speechTimer">00:30</div>
+            <p class="text-xs text-[var(--muted)] font-medium" id="speechStatusMsg">Stand tall like a superhero, take a deep breath, and hit start!</p>
+          </div>
+
+          <div class="w-full mt-4">
+            <button id="btnStartSpeechTimer" class="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-sm font-black shadow-lg transition-all flex items-center justify-center gap-2">
+              <span>&#9654;</span> Start Speech Presentation Test!
+            </button>
+            <div id="speechCelebrationBox" class="hidden mt-3 p-3 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= DEDICATED TARGET REWARDS & PROGRESS HUB ================= -->
+    <section id="sect-target" class="subject-panel p-6 md:p-8 flex flex-col hidden">
+      
+      <!-- Top Target Header Banner -->
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-[var(--border)]">
+        <div class="flex items-center gap-3">
+          <div class="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center text-3xl shadow-lg border-2 border-white/20">
+            &#127919;
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-red-500 flex items-center gap-2 flex-wrap">
+              <span>Nyrah's Target Rewards Bank</span>
+              <span class="text-xs uppercase bg-red-500/20 text-red-500 px-2.5 py-0.5 rounded-full font-bold">Official Goal</span>
+            </h2>
+            <p class="text-xs text-[var(--muted)]">Every <b>10 A's</b> = <b>$10 Target Gift Card</b> from Uncle &amp; Family!</p>
+          </div>
+        </div>
+
+        <button id="btnCheerTarget" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-black shadow flex items-center gap-2 pulse-glow">
+          <span>&#127881;</span> Target Celebration!
+        </button>
+      </div>
+
+      <!-- Main Layout: Target RedCard + Progress Tracker -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        
+        <!-- Left: Virtual Target RedCard for NYRAH -->
+        <div class="lg:col-span-1 bg-gradient-to-br from-red-600 via-rose-600 to-red-700 text-white rounded-3xl p-6 shadow-2xl border-2 border-red-400/40 flex flex-col justify-between min-h-[230px] relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 text-9xl text-white/10 pointer-events-none font-black select-none">
+            &#127919;
+          </div>
+          
+          <div class="flex items-center justify-between relative z-10">
+            <div class="flex items-center gap-2 font-black tracking-widest text-lg">
+              <span class="text-2xl">&#127919;</span> TARGET
+            </div>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-white/20 backdrop-blur-sm">Nyrah's RedCard</span>
+          </div>
+
+          <div class="my-4 relative z-10">
+            <div class="text-[10px] uppercase tracking-wider text-white/80 font-bold">Total Target Credit Earned</div>
+            <div class="text-4xl font-black font-mono tracking-tight" id="targetCardBalance">$0.00</div>
+            <div class="text-[11px] text-white/90 mt-1 font-semibold flex items-center gap-1">
+              <span>Ready to Spend:</span> <b id="targetReadyToSpend" class="text-yellow-200 font-bold">$0.00</b>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs font-mono relative z-10 pt-2 border-t border-white/20">
+            <div>
+              <div class="text-[9px] uppercase tracking-wider text-white/70">Cardholder</div>
+              <div class="font-bold tracking-wider text-sm">NYRAH</div>
+            </div>
+            <div class="text-right">
+              <div class="text-[9px] uppercase tracking-wider text-white/70">Card No.</div>
+              <div class="font-bold">•••• 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Progress Meter to Next $10 -->
+        <div class="lg:col-span-2 bg-[var(--bg)] border-2 border-[var(--border)] rounded-3xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs uppercase font-black text-red-500 tracking-wider flex items-center gap-1.5">
+                <span>&#127919;</span> Progress Toward Next $10 Target Gift Card
+              </span>
+              <span class="text-sm font-mono font-black text-[var(--fg)]" id="targetRatioLabel">0 / 10 A's</span>
+            </div>
+
+            <!-- Thick Animated Progress Bar -->
+            <div class="w-full h-7 bg-[var(--card)] rounded-full overflow-hidden p-1 border-2 border-[var(--border)] mb-3 shadow-inner">
+              <div id="targetProgressBar" class="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-700 ease-out flex items-center justify-end pr-2 text-[10px] font-black text-white" style="width: 0%;">
+                <span id="targetBarPercent">0%</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-[var(--muted)] font-semibold" id="targetNeededMsg">
+              Earn 10 A's across Math, Comprehension, Vocab, or Speaking to receive your first $10 Target Gift Card!
+            </p>
+          </div>
+
+          <!-- 10-Spot Interactive Bullseye Step Tracker -->
+          <div class="mt-6 pt-4 border-t border-[var(--border)]">
+            <span class="text-[10px] uppercase font-bold text-[var(--muted)] block mb-2.5">Nyrah's 10 A-Grade Steps to Target:</span>
+            <div class="grid grid-cols-5 md:grid-cols-10 gap-2 select-none" id="targetBullseyeSteps">
+              <!-- Dynamically populated 10 steps -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Target Milestone Gift Cards Grid ($10, $20, $30, $40, $50) -->
+      <div class="mb-8">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-[var(--fg)] mb-3 flex items-center gap-2">
+          <span>&#128176;</span> Target Shopping Spree Milestones
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="targetMilestonesGrid">
+          <!-- Dynamically generated milestone cards -->
+        </div>
+      </div>
+
+      <!-- Qualifying A Tests Table -->
+      <div class="bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl overflow-hidden shadow-inner">
+        <div class="px-4 py-3 bg-[var(--card)] border-b border-[var(--border)] flex items-center justify-between">
+          <span class="text-xs uppercase font-bold text-[var(--fg)] flex items-center gap-2">
+            <span>&#11088;</span> Nyrah's Qualifying A-Grade Tests (<span id="totalAPlusBadge">0</span>)
+          </span>
+          <span class="text-[10px] text-[var(--muted)]">All A's count toward Target rewards</span>
+        </div>
+        <div class="max-h-[240px] overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[var(--card)] text-[10px] uppercase font-bold text-[var(--muted)] sticky top-0 border-b border-[var(--border)]">
+              <tr>
+                <th class="p-2.5">Date</th>
+                <th class="p-2.5">Subject</th>
+                <th class="p-2.5">Test Name</th>
+                <th class="p-2.5">Performance</th>
+                <th class="p-2.5 text-right">Target Credit</th>
+              </tr>
+            </thead>
+            <tbody id="targetAPlusTableBody" class="divide-y divide-[var(--border)] font-mono">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ================= FULL TEST ARCHIVE VIEW ================= -->
+    <section id="sect-history" class="subject-panel p-6 md:p-8 flex flex-col hidden">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-3 border-b border-[var(--border)]">
+        <div>
+          <h2 class="text-xl font-black text-blue-400 flex items-center gap-2">
+            <span>&#128202; Nyrah's Complete Test Archive</span>
+          </h2>
+          <p class="text-xs text-[var(--muted)]">All tests permanently recorded with dates, accuracy metrics, and grades.</p>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <button id="btnExportCSV" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
+            <span>&#128229;</span> Export Spreadsheet (CSV)
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Summary -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-[var(--bg)] p-4 rounded-2xl border border-[var(--border)]">
+          <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Total Tests Taken</div>
+          <div class="text-2xl font-black text-blue-400 font-mono" id="statTotalTests">0</div>
+        </div>
+        <div class="bg-[var(--bg)] p-4 rounded-2xl border border-[var(--border)]">
+          <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Current Standing</div>
+          <div class="text-2xl font-black text-emerald-400 font-mono" id="statCurrentGPA">A+ (4.0)</div>
+        </div>
+        <div class="bg-[var(--bg)] p-4 rounded-2xl border border-[var(--border)]">
+          <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Stars Earned</div>
+          <div class="text-2xl font-black text-amber-400 font-mono" id="statStars">0</div>
+        </div>
+        <div class="bg-[var(--bg)] p-4 rounded-2xl border border-[var(--border)]">
+          <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Target Credit</div>
+          <div class="text-2xl font-black text-red-500 font-mono" id="statTargetCredit">$0</div>
+        </div>
+      </div>
+
+      <!-- Subject Filter Pills -->
+      <div class="flex items-center gap-2 mb-4 overflow-x-auto text-xs font-bold">
+        <span class="text-[var(--muted)] text-[10px] uppercase">Filter:</span>
+        <button data-filter="all" class="filter-btn px-3 py-1 rounded-lg bg-blue-600 text-white">All</button>
+        <button data-filter="addition" class="filter-btn px-3 py-1 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--fg)]">Addition</button>
+        <button data-filter="subtraction" class="filter-btn px-3 py-1 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--fg)]">Subtraction</button>
+        <button data-filter="multiplication" class="filter-btn px-3 py-1 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--fg)]">Multiplication</button>
+        <button data-filter="reading" class="filter-btn px-3 py-1 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--fg)]">Comprehension</button>
+        <button data-filter="vocab" class="filter-btn px-3 py-1 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--fg)]">Vocab</button>
+        <button data-filter="speaking" class="filter-btn px-3 py-1 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--fg)]">Speaking</button>
+      </div>
+
+      <!-- Test Log Table -->
+      <div class="bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl overflow-hidden shadow-inner">
+        <div class="max-h-[380px] overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[var(--card)] border-b border-[var(--border)] text-[10px] uppercase font-bold text-[var(--muted)] sticky top-0">
+              <tr>
+                <th class="p-3">Date &amp; Time</th>
+                <th class="p-3">Subject</th>
+                <th class="p-3">Test Activity</th>
+                <th class="p-3">Performance &amp; Time</th>
+                <th class="p-3 text-right">Grade</th>
+              </tr>
+            </thead>
+            <tbody id="testLogTableBody" class="divide-y divide-[var(--border)] font-mono">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= MASTER REPORT CARD & PRINTABLE CERTIFICATE MODAL ================= -->
+    <section id="sect-report-card" class="subject-panel p-6 md:p-10 flex flex-col items-center hidden">
+      <div class="w-24 h-24 rounded-3xl bg-amber-500/10 border-2 border-amber-500/30 text-amber-400 flex items-center justify-center text-5xl mb-4 shadow-lg animate-bounce">
+        &#127942;
+      </div>
+
+      <h2 class="text-3xl font-black text-[var(--fg)] text-center mb-1">Nyrah's Academy Report Card</h2>
+      <p class="text-xs text-[var(--muted)] text-center mb-6">Official Cumulative Academic Progress Record for 6-Year-Old Nyrah</p>
+
+      <div class="w-full max-w-xl bg-[var(--bg)] border-2 border-[var(--border)] rounded-2xl p-6 shadow-xl mb-6">
+        <div class="flex items-center justify-between border-b border-[var(--border)] pb-5 mb-5">
+          <div>
+            <span class="text-xs uppercase font-bold tracking-wider text-[var(--muted)]">Overall Academy Grade</span>
+            <div class="text-5xl font-black text-emerald-400 mt-1" id="overallAcademyGrade">A+ &#11088;</div>
+            <span class="text-xs font-semibold text-emerald-400">Grand Superstar Scholar!</span>
+          </div>
+          <div class="text-right">
+            <span class="text-xs uppercase font-bold tracking-wider text-red-400">Target Credit</span>
+            <div class="text-3xl font-mono font-black text-red-500 mt-1" id="reportTargetCredit">$0</div>
+            <span class="text-xs text-[var(--muted)]">10 A's = $10 Reward</span>
+          </div>
+        </div>
+
+        <span class="text-xs font-bold uppercase tracking-wider text-[var(--muted)] mb-3 block">Subject-by-Subject Standing:</span>
+        <div class="space-y-2 text-xs font-mono" id="reportSubjectList"></div>
+      </div>
+
+      <div class="flex items-center gap-4 flex-wrap justify-center">
+        <button id="btnCloseReport" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow">
+          &larr; Back to Learning
+        </button>
+        <button id="btnPrintCertificate" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-xl text-xs font-black shadow flex items-center gap-1.5">
+          <span>&#128424;</span> Print Official Certificate for Fridge!
+        </button>
+      </div>
+
+      <!-- Printable Certificate Layout (Visible when printed) -->
+      <div id="certificatePrintArea" class="hidden mt-8 w-full max-w-2xl border-8 border-amber-400 rounded-3xl p-8 bg-white text-slate-900 text-center font-sans shadow-2xl">
+        <div class="text-6xl mb-2">&#127891;</div>
+        <h1 class="text-3xl font-black uppercase tracking-wider text-amber-600 mb-1">Official Certificate of Excellence</h1>
+        <p class="text-sm text-slate-500 font-bold mb-6">NYRAH'S LEARNING ACADEMY</p>
+        
+        <p class="text-base text-slate-700 mb-2">This certifies that superstar scholar</p>
+        <h2 class="text-4xl font-black text-slate-900 border-b-2 border-slate-300 pb-2 mb-4">NYRAH</h2>
+        <p class="text-sm text-slate-700 max-w-md mx-auto mb-6 leading-relaxed">
+          Has demonstrated brilliant achievement in <b>Addition, Subtraction, Multiplication, Reading Comprehension, Power Vocabulary, and Public Speaking</b>, officially qualifying for <b>Target Rewards</b>!
+        </p>
+
+        <div class="flex items-center justify-around border-t border-slate-200 pt-6 mt-6">
+          <div>
+            <div class="text-2xl font-black text-emerald-600">GRADE A+</div>
+            <div class="text-[10px] text-slate-500 uppercase font-bold">Academic Standing</div>
+          </div>
+          <div>
+            <div class="text-2xl font-black text-red-600">&#127919; TARGET</div>
+            <div class="text-[10px] text-slate-500 uppercase font-bold">Reward Card Recipient</div>
+          </div>
+          <div>
+            <div class="text-base font-bold text-slate-800 border-b border-slate-400 px-4 pb-0.5" id="certDateDisplay">Oct 2026</div>
+            <div class="text-[10px] text-slate-500 uppercase font-bold">Date Awarded</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= PARENT & UNCLE STUDIO & TARGET PAYOUT HUB ================= -->
+    <section id="sect-parent" class="subject-panel p-6 md:p-8 flex flex-col hidden">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-3 border-b border-[var(--border)]">
+        <div>
+          <h2 class="text-xl font-black text-[var(--fg)] flex items-center gap-2">
+            <span>&#9881;&#65039; Parent &amp; Uncle Studio &bull; Target Payout Hub</span>
+          </h2>
+          <p class="text-xs text-[var(--muted)]">Manage Nyrah's Target gift cards and assign custom math &amp; vocabulary challenges.</p>
+        </div>
+        <button id="btnReturnToStudent" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold">
+          &larr; Back to Student Hub
+        </button>
+      </div>
+
+      <!-- TARGET REWARD PAYOUT MANAGER -->
+      <div class="bg-red-500/10 border-2 border-red-500/30 rounded-3xl p-6 mb-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="text-base font-black text-red-500 flex items-center gap-2">
+              <span>&#127919; Target Credit Payout Manager</span>
+            </h3>
+            <p class="text-xs text-[var(--muted)]">Rule: 10 A's = $10 Target Card. Keep track of what cards have been handed to Nyrah.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="btnMarkTargetPaid" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-black shadow flex items-center gap-1.5 transition-all">
+              <span>&#127873;</span> Mark $10 Card Handed to Nyrah
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-center">
+          <div class="bg-[var(--card)] p-3 rounded-xl border border-[var(--border)]">
+            <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Total A-Tests</div>
+            <span id="payoutTotalAPlus" class="text-2xl font-black text-emerald-400">0</span>
+          </div>
+          <div class="bg-[var(--card)] p-3 rounded-xl border border-[var(--border)]">
+            <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Cards Unlocked</div>
+            <span id="payoutCardsUnlocked" class="text-xl font-black text-red-500">0 ($0)</span>
+          </div>
+          <div class="bg-[var(--card)] p-3 rounded-xl border border-[var(--border)]">
+            <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Cards Handed Out</div>
+            <span id="payoutCardsGiven" class="text-xl font-black text-blue-400">0 ($0)</span>
+          </div>
+          <div class="bg-[var(--card)] p-3 rounded-xl border border-[var(--border)]">
+            <div class="text-[10px] uppercase font-bold text-[var(--muted)]">Pending Payout</div>
+            <span id="payoutPending" class="text-2xl font-black text-amber-400">$0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Curriculum Customizers -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Creator Tool 1: Math Problem Creator -->
+        <div class="bg-[var(--bg)] p-5 rounded-2xl border-2 border-[var(--border)] flex flex-col justify-between">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">&#10133; Add Custom Math Problem for Nyrah</h3>
+            <p class="text-xs text-[var(--muted)] mb-3">Add specific problems for Nyrah to practice:</p>
+            
+            <div class="space-y-3 mb-4">
+              <div>
+                <label class="text-[10px] uppercase font-bold text-[var(--muted)] block mb-1">Select Topic:</label>
+                <select id="pMathType" class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl p-2 text-xs font-bold text-[var(--fg)]">
+                  <option value="add">Addition (e.g. 6 + 5)</option>
+                  <option value="sub">Subtraction (e.g. 10 - 4)</option>
+                  <option value="mult">Multiplication (e.g. 3 &times; 4)</option>
+                </select>
+              </div>
+
+              <!-- Inputs for Math -->
+              <div class="flex items-center gap-2">
+                <input id="pMathA" type="number" placeholder="Number 1" class="w-28 text-center font-bold bg-[var(--card)] border border-[var(--border)] rounded-xl p-2 text-sm text-[var(--fg)]" />
+                <span id="pMathOpSymbol" class="text-xl font-bold text-blue-400">&#10133;</span>
+                <input id="pMathB" type="number" placeholder="Number 2" class="w-28 text-center font-bold bg-[var(--card)] border border-[var(--border)] rounded-xl p-2 text-sm text-[var(--fg)]" />
+              </div>
+            </div>
+
+            <button id="btnAddParentMath" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow transition-all">
+              &#10133; Add to Nyrah's Test Queue
+            </button>
+            <div id="parentMathAddedMsg" class="hidden text-center text-xs font-bold text-emerald-400 mt-2">Problem added to Nyrah's test queue!</div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-[var(--border)]">
+            <span class="text-[10px] uppercase font-bold text-[var(--muted)] block mb-1">Active Custom Math Problems:</span>
+            <div id="customMathList" class="max-h-24 overflow-y-auto space-y-1 text-xs text-[var(--muted)]"></div>
+          </div>
+        </div>
+
+        <!-- Creator Tool 2: Custom Vocab Word -->
+        <div class="bg-[var(--bg)] p-5 rounded-2xl border-2 border-[var(--border)] flex flex-col justify-between">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2">&#10133; Add New Vocabulary Word for Nyrah</h3>
+            <div class="space-y-2 mb-4">
+              <input id="pVocabWord" placeholder="Word (e.g. Spectacular)" class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl p-2 text-xs font-bold text-[var(--fg)]" />
+              <input id="pVocabDef" placeholder="Kid Definition (e.g. Super amazing to look at)" class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl p-2 text-xs text-[var(--fg)]" />
+              <input id="pVocabEx" placeholder="Example Sentence (e.g. Nyrah saw a spectacular rainbow)" class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl p-2 text-xs text-[var(--fg)]" />
+            </div>
+            <button id="btnAddParentVocab" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow mb-4">
+              &#10133; Add Word to Vocab Quiz
+            </button>
+          </div>
+
+          <div class="pt-3 border-t border-[var(--border)] flex items-center justify-between">
+            <button id="btnClearAllData" class="text-xs text-rose-400 hover:underline font-semibold">Clear Test History &amp; Stars</button>
+            <button id="btnResetDefaultCurriculum" class="text-xs text-blue-400 hover:underline font-semibold">Reset to Standard 6-Year-Old Curriculum</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+
+  <!-- ================= TARGET $10 REWARD CELEBRATION MODAL ================= -->
+  <div id="targetRewardModal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-[var(--card)] border-2 border-red-500 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl relative animate-bounce">
+      <div class="w-20 h-20 bg-red-600 text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-4 shadow-lg border-2 border-white">
+        &#127919;
+      </div>
+      <span class="text-xs uppercase font-black tracking-widest text-red-500 block mb-1">TARGET MILESTONE UNLOCKED!</span>
+      <h2 class="text-2xl font-black text-[var(--fg)] mb-2">Hooray Nyrah! $10 Target Card!</h2>
+      <p class="text-sm text-[var(--muted)] mb-6">
+        Sensational work, Nyrah! You finished <b>10 A-Grade tests</b>! Go show Uncle or Mom to claim your <b>$10 Target shopping credit</b>!
+      </p>
+
+      <div class="bg-red-500/15 border border-red-500/30 rounded-2xl p-4 mb-6">
+        <div class="text-3xl font-black text-red-500 font-mono" id="modalTargetAmt">$10.00 TARGET CREDIT</div>
+        <div class="text-[11px] text-red-400 font-bold mt-1">Ready to Spend on Toys or Books at Target!</div>
+      </div>
+
+      <button id="btnCloseTargetModal" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-black text-sm rounded-xl shadow-lg transition-all">
+        Claim My Target Reward! &rarr;
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ================= SCRIPTS ================= -->
+  <script>
+    // ================= 1. PERSISTENT TEST ARCHIVE FOR NYRAH =================
+    const STORAGE_KEY_HISTORY = 'nyrah_academy_test_history_v1';
+    const STORAGE_KEY_STARS = 'nyrah_academy_stars_v1';
+    const STORAGE_KEY_PAID = 'nyrah_target_paid_v1';
+
+    let testHistory = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [
+      { date: new Date().toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }), subject: "Addition", title: "5 + 5 Welcome Challenge", metric: "100% Accuracy (First Try!)", grade: "A+" }
+    ];
+
+    let stars = parseInt(localStorage.getItem(STORAGE_KEY_STARS)) || 10;
+    let targetPaidCount = parseInt(localStorage.getItem(STORAGE_KEY_PAID)) || 0;
+
+    const academyStarsEl = document.getElementById('academyStars');
+    const testCountBadge = document.getElementById('testCountBadge');
+    academyStarsEl.textContent = stars;
+    testCountBadge.textContent = testHistory.length;
+
+    function logTestResult(subject, title, metric, grade) {
+      const entry = {
+        date: new Date().toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        subject: subject,
+        title: title,
+        metric: metric,
+        grade: grade
+      };
+      testHistory.unshift(entry);
+      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(testHistory));
+      testCountBadge.textContent = testHistory.length;
+      updateStats();
+      renderTestHistoryTable('all');
+      updateTargetRewards();
+
+      // Check if Nyrah reached a new 10 A's threshold
+      if (grade === "A+" || grade === "A") {
+        const aCount = testHistory.filter(t => t.grade === 'A+' || t.grade === 'A').length;
+        if (aCount > 0 && aCount % 10 === 0) {
+          showTargetRewardUnlock(aCount);
+        }
+      }
+    }
+
+    function addStar(count = 1) {
+      stars += count;
+      localStorage.setItem(STORAGE_KEY_STARS, stars);
+      academyStarsEl.textContent = stars;
+      triggerConfetti();
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 0.88;
+        u.pitch = 1.05;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    // Main Tab Switching
+    const navButtons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.subject-panel');
+    const btnParentHub = document.getElementById('btnParentHub');
+    const btnReturnToStudent = document.getElementById('btnReturnToStudent');
+    const btnOpenReportCard = document.getElementById('btnOpenReportCard');
+    const btnCloseReport = document.getElementById('btnCloseReport');
+    const btnOpenHistory = document.getElementById('btnOpenHistory');
+    const btnTopTargetRewards = document.getElementById('btnTopTargetRewards');
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        panels.forEach(p => p.classList.add('hidden'));
+        document.getElementById(`sect-${targetTab}`).classList.remove('hidden');
+
+        navButtons.forEach(b => {
+          if (b.getAttribute('data-tab') === 'target') {
+            b.className = "tab-btn px-4 py-2 rounded-xl text-xs font-black text-red-500 hover:text-white hover:bg-red-600 border border-red-500/40 transition-all flex items-center gap-2 whitespace-nowrap";
+          } else {
+            b.className = "tab-btn px-4 py-2 rounded-xl text-xs font-bold text-[var(--muted)] hover:text-[var(--fg)] transition-all flex items-center gap-2 whitespace-nowrap";
+          }
+        });
+
+        if (targetTab === 'target') {
+          btn.className = "tab-btn px-4 py-2 rounded-xl text-xs font-black bg-red-600 text-white shadow-md transition-all flex items-center gap-2 whitespace-nowrap";
+          updateTargetRewards();
+        } else {
+          btn.className = "tab-btn px-4 py-2 rounded-xl text-xs font-black bg-blue-600 text-white shadow-md transition-all flex items-center gap-2 whitespace-nowrap";
+        }
+      });
+    });
+
+    btnTopTargetRewards.addEventListener('click', () => {
+      document.querySelector('[data-tab="target"]').click();
+    });
+
+    btnOpenHistory.addEventListener('click', () => {
+      panels.forEach(p => p.classList.add('hidden'));
+      document.getElementById('sect-history').classList.remove('hidden');
+      updateStats();
+      renderTestHistoryTable('all');
+    });
+
+    btnParentHub.addEventListener('click', () => {
+      panels.forEach(p => p.classList.add('hidden'));
+      document.getElementById('sect-parent').classList.remove('hidden');
+      renderCustomMathList();
+      updateTargetRewards();
+    });
+
+    btnReturnToStudent.addEventListener('click', () => { navButtons[0].click(); });
+    btnOpenReportCard.addEventListener('click', showMasterReportCard);
+    btnCloseReport.addEventListener('click', () => { navButtons[0].click(); });
+
+    document.getElementById('btnPrintCertificate').addEventListener('click', () => {
+      document.getElementById('certDateDisplay').textContent = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      const printBox = document.getElementById('certificatePrintArea');
+      printBox.classList.remove('hidden');
+      window.print();
+    });
+
+
+    // ================= 2. TARGET REWARDS ENGINE FOR NYRAH =================
+    function updateTargetRewards() {
+      const aTests = testHistory.filter(t => t.grade === 'A+' || t.grade === 'A');
+      const aCount = aTests.length;
+      const totalEarnedDollars = Math.floor(aCount / 10) * 10;
+      const cardsUnlocked = Math.floor(aCount / 10);
+      const readyToSpendDollars = Math.max(0, totalEarnedDollars - (targetPaidCount * 10));
+      const progressCount = aCount % 10;
+      const neededCount = 10 - progressCount;
+      const progressPercent = progressCount * 10;
+
+      // Header Badges
+      document.getElementById('targetCreditBadge').textContent = `$${totalEarnedDollars}`;
+      document.getElementById('targetTabAmt').textContent = `$${totalEarnedDollars}`;
+      document.getElementById('statTargetCredit').textContent = `$${totalEarnedDollars}`;
+      document.getElementById('reportTargetCredit').textContent = `$${totalEarnedDollars}`;
+
+      // Card Display
+      document.getElementById('targetCardBalance').textContent = `$${totalEarnedDollars}.00`;
+      document.getElementById('targetReadyToSpend').textContent = `$${readyToSpendDollars}.00`;
+
+      // Progress Meter
+      document.getElementById('targetRatioLabel').textContent = `${progressCount} / 10 A's`;
+      document.getElementById('targetProgressBar').style.width = `${progressPercent}%`;
+      document.getElementById('targetBarPercent').textContent = `${progressPercent}%`;
+
+      if (progressCount === 0 && aCount > 0) {
+        document.getElementById('targetNeededMsg').innerHTML = `🎉 <b>CONGRATULATIONS NYRAH!</b> You earned a $10 Target Card! Starting your next $10 goal now!`;
+      } else {
+        document.getElementById('targetNeededMsg').innerHTML = `Just <b>${neededCount} more A-grade tests</b> to unlock your ${totalEarnedDollars > 0 ? 'NEXT' : 'first'} <b>$10 Target Gift Card</b>!`;
+      }
+
+      // Render 10-Spot Bullseye Tracker
+      const stepContainer = document.getElementById('targetBullseyeSteps');
+      stepContainer.innerHTML = '';
+      for (let i = 1; i <= 10; i++) {
+        const step = document.createElement('div');
+        const isDone = i <= progressCount;
+        step.className = `p-2 rounded-xl flex flex-col items-center justify-center border-2 transition-all ${
+          isDone ? 'bg-red-500/20 border-red-500 text-red-500 scale-105 shadow-md' : 'bg-[var(--card)] border-[var(--border)] text-[var(--muted)] opacity-60'
+        }`;
+        step.innerHTML = `
+          <span class="text-base">${isDone ? '&#127919;' : '&#9675;'}</span>
+          <span class="text-[10px] font-black mt-0.5">#${i}</span>
+        `;
+        stepContainer.appendChild(step);
+      }
+
+      // Render Milestones Grid ($10, $20, $30, $40, $50)
+      const mileGrid = document.getElementById('targetMilestonesGrid');
+      mileGrid.innerHTML = '';
+      const milestones = [
+        { req: 10, val: 10 },
+        { req: 20, val: 20 },
+        { req: 30, val: 30 },
+        { req: 40, val: 40 },
+        { req: 50, val: 50 }
+      ];
+
+      milestones.forEach((m, idx) => {
+        const isUnlocked = aCount >= m.req;
+        const isPaid = (idx + 1) <= targetPaidCount;
+        const box = document.createElement('div');
+        box.className = `p-3 rounded-2xl border-2 flex flex-col justify-between transition-all ${
+          isUnlocked 
+            ? isPaid 
+              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' 
+              : 'bg-red-500/15 border-red-500 text-red-500 shadow-lg scale-102 pulse-glow' 
+            : 'bg-[var(--card)] border-[var(--border)] text-[var(--muted)] opacity-60'
+        }`;
+
+        let statusText = `🔒 Needs ${m.req - aCount} more`;
+        if (isUnlocked) {
+          statusText = isPaid ? "✅ Handed to Nyrah" : "🛍️ Ready to Spend!";
+        }
+
+        box.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-bold uppercase">${m.req} A's Goal</span>
+            <span class="text-base">&#127919;</span>
+          </div>
+          <div class="text-xl font-black font-mono my-1">$${m.val} Card</div>
+          <div class="text-[9px] font-bold uppercase mt-1">${statusText}</div>
+        `;
+        mileGrid.appendChild(box);
+      });
+
+      // Render A Qualifying Table
+      document.getElementById('totalAPlusBadge').textContent = aCount;
+      const tbody = document.getElementById('targetAPlusTableBody');
+      tbody.innerHTML = '';
+      if (aTests.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-xs text-[var(--muted)]">Complete any test with an A or A+ grade to start building your Target bank!</td></tr>`;
+      } else {
+        aTests.forEach(t => {
+          const row = document.createElement('tr');
+          row.className = "hover:bg-[var(--card)]";
+          row.innerHTML = `
+            <td class="p-2.5 text-[var(--muted)]">${t.date}</td>
+            <td class="p-2.5"><span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-500/10 text-red-500">${t.subject}</span></td>
+            <td class="p-2.5 font-bold text-[var(--fg)]">${t.title}</td>
+            <td class="p-2.5 text-[var(--muted)]">${t.metric}</td>
+            <td class="p-2.5 text-right font-black text-red-500">+1 A (Target)</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // Parent Studio Target Payout Sync
+      document.getElementById('payoutTotalAPlus').textContent = aCount;
+      document.getElementById('payoutCardsUnlocked').textContent = `${cardsUnlocked} ($${totalEarnedDollars})`;
+      document.getElementById('payoutCardsGiven').textContent = `${targetPaidCount} ($${targetPaidCount * 10})`;
+      document.getElementById('payoutPending').textContent = `$${readyToSpendDollars}`;
+    }
+
+    function showTargetRewardUnlock(totalA) {
+      const amt = Math.floor(totalA / 10) * 10;
+      document.getElementById('modalTargetAmt').textContent = `$${amt}.00 TARGET CREDIT`;
+      document.getElementById('targetRewardModal').classList.remove('hidden');
+      triggerConfetti();
+      speakText(`Sensational job Nyrah! You earned 10 A-grade tests! You just unlocked a ten dollar Target gift card!`);
+    }
+
+    document.getElementById('btnCloseTargetModal').addEventListener('click', () => {
+      document.getElementById('targetRewardModal').classList.add('hidden');
+      document.querySelector('[data-tab="target"]').click();
+    });
+
+    document.getElementById('btnCheerTarget').addEventListener('click', () => {
+      triggerConfetti();
+      speakText("Keep going Nyrah! Every 10 A's unlocks a 10 dollar Target gift card!");
+    });
+
+    // Parent Studio: Mark $10 Card Handed Out
+    document.getElementById('btnMarkTargetPaid').addEventListener('click', () => {
+      const aCount = testHistory.filter(t => t.grade === 'A+' || t.grade === 'A').length;
+      const totalEarnedCards = Math.floor(aCount / 10);
+      if (targetPaidCount >= totalEarnedCards) {
+        alert("Nyrah has already received all unlocked Target gift cards! Complete more tests to unlock the next card.");
+        return;
+      }
+      targetPaidCount++;
+      localStorage.setItem(STORAGE_KEY_PAID, targetPaidCount);
+      updateTargetRewards();
+      alert(`Success! Marked $10 Target Card #${targetPaidCount} as given to Nyrah!`);
+    });
+
+
+    // ================= 3. MATH SECTION CONTROLLER =================
+    const mathSubtabs = document.querySelectorAll('.math-subtab');
+    const mathViews = document.querySelectorAll('.math-view');
+    const mathSubDesc = document.getElementById('mathSubDesc');
+
+    mathSubtabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-mode');
+        mathSubtabs.forEach(b => {
+          b.className = "math-subtab px-3.5 py-1.5 rounded-lg text-xs font-bold text-[var(--muted)] hover:text-[var(--fg)] transition-all";
+        });
+        btn.className = "math-subtab px-3.5 py-1.5 rounded-lg text-xs font-black bg-blue-600 text-white shadow transition-all";
+        
+        mathViews.forEach(v => v.classList.add('hidden'));
+        document.getElementById(`subpanel-${mode}`).classList.remove('hidden');
+
+        if (mode === 'add') {
+          mathSubDesc.textContent = "Count visual items or add the numbers together to find the sum!";
+          loadAdd(addIdx);
+        } else if (mode === 'sub') {
+          mathSubDesc.textContent = "Takeaway math! See the items crossed out and count what is left.";
+          loadSub(subIdx);
+        } else if (mode === 'mult') {
+          mathSubDesc.textContent = "Equal groups concept & times tables for beginner mathematicians!";
+          loadMult(multIdx);
+        }
+      });
+    });
+
+    let mathTimerInterval = null, mStart = Date.now();
+    function startMathTimer() {
+      if (mathTimerInterval) clearInterval(mathTimerInterval);
+      mStart = Date.now();
+      const el = document.getElementById('mathTimer');
+      mathTimerInterval = setInterval(() => {
+        const sec = Math.floor((Date.now() - mStart)/1000);
+        el.textContent = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+      }, 1000);
+    }
+
+
+    // ----------------- 3A. ADDITION ADVENTURE (FOR 6yo) -----------------
+    const defaultAddProbs = [
+      { n1: 4, n2: 3, icon: '🍎' },
+      { n1: 5, n2: 2, icon: '🌟' },
+      { n1: 6, n2: 4, icon: '🐱' },
+      { n1: 7, n2: 5, icon: '🎈' },
+      { n1: 8, n2: 3, icon: '🍪' }
+    ];
+    let customAddProbs = JSON.parse(localStorage.getItem('custom_math_add')) || [];
+    let addProbs = customAddProbs.length > 0 ? customAddProbs : defaultAddProbs;
+
+    let addIdx = 0, addMistakes = 0, addLevel = 1;
+    const addNum1 = document.getElementById('addNum1'), addNum2 = document.getElementById('addNum2');
+    const inpAddAns = document.getElementById('inpAddAns'), addVisualBox = document.getElementById('addVisualBox');
+    const btnAddCheck = document.getElementById('btnAddCheck'), btnAddNext = document.getElementById('btnAddNext');
+    const addCoachMsg = document.getElementById('addCoachMsg'), addSpdBadge = document.getElementById('addSpdBadge');
+    const addProgress = document.getElementById('addProgress');
+
+    function renderAddVisual(n1, n2, icon = '🍎') {
+      addVisualBox.innerHTML = '';
+      const row1 = document.createElement('div');
+      row1.className = "flex items-center gap-1 text-2xl flex-wrap justify-center";
+      for (let i = 0; i < n1; i++) row1.innerHTML += `<span>${icon}</span>`;
+      
+      const plusSpan = document.createElement('span');
+      plusSpan.className = "text-emerald-400 font-bold text-lg mx-2";
+      plusSpan.textContent = "+";
+
+      const row2 = document.createElement('div');
+      row2.className = "flex items-center gap-1 text-2xl flex-wrap justify-center";
+      for (let i = 0; i < n2; i++) row2.innerHTML += `<span>${icon}</span>`;
+
+      addVisualBox.appendChild(row1);
+      addVisualBox.appendChild(plusSpan);
+      addVisualBox.appendChild(row2);
+    }
+
+    function loadAdd(i) {
+      addIdx = i % addProbs.length;
+      addMistakes = 0;
+      const p = addProbs[addIdx];
+      addNum1.textContent = p.n1;
+      addNum2.textContent = p.n2;
+      inpAddAns.value = '';
+      inpAddAns.classList.remove('border-emerald-500', 'bg-emerald-500/20', 'border-rose-500');
+      btnAddCheck.classList.remove('hidden');
+      btnAddNext.classList.add('hidden');
+      addSpdBadge.classList.add('hidden');
+      addProgress.textContent = `Problem ${addIdx+1} of ${addProbs.length}`;
+      renderAddVisual(p.n1, p.n2, p.icon || '🍎');
+      addCoachMsg.innerHTML = `Count the items! Start at <b>${Math.max(p.n1, p.n2)}</b> and count up <b>${Math.min(p.n1, p.n2)}</b> more!`;
+      startMathTimer();
+    }
+
+    function checkAdd() {
+      const p = addProbs[addIdx];
+      const expected = p.n1 + p.n2;
+      const userAns = parseInt(inpAddAns.value);
+
+      if (userAns === expected) {
+        clearInterval(mathTimerInterval);
+        const sec = Math.max(1, Math.floor((Date.now() - mStart)/1000));
+        addStar(2);
+        inpAddAns.classList.add('border-emerald-500', 'bg-emerald-500/20', 'pop');
+        btnAddCheck.classList.add('hidden');
+        btnAddNext.classList.remove('hidden');
+
+        const grade = addMistakes === 0 ? "A+" : addMistakes <= 1 ? "A" : "A-";
+        logTestResult('Addition', `${p.n1} + ${p.n2} Addition`, `${p.n1}+${p.n2}=${expected} in ${sec}s (${addMistakes === 0 ? '100% Perfect' : addMistakes + ' tries'})`, grade);
+
+        addSpdBadge.classList.remove('hidden');
+        addSpdBadge.innerHTML = `&#127894;&#65039; <b>Addition Logged: Grade ${grade}</b> (${sec}s) +2 Stars! Saved to Target Bank!`;
+        addCoachMsg.innerHTML = `&#127881; <b>AWESOME NYRAH!</b> ${p.n1} + ${p.n2} = <b>${expected}</b>!`;
+        speakText(`Hooray Nyrah! ${p.n1} plus ${p.n2} equals ${expected}! Grade ${grade}!`);
+      } else {
+        addMistakes++;
+        inpAddAns.classList.add('wiggle', 'border-rose-500');
+        setTimeout(() => inpAddAns.classList.remove('wiggle'), 400);
+        addCoachMsg.innerHTML = `&#129300; Let's count the items together! Touch each one and count up!`;
+      }
+    }
+
+    btnAddCheck.addEventListener('click', checkAdd);
+    btnAddNext.addEventListener('click', () => loadAdd(addIdx + 1));
+    document.getElementById('btnNumpadEnterAdd').addEventListener('click', checkAdd);
+
+    // Addition Numpad Buttons
+    document.querySelectorAll('.numpad-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-val');
+        inpAddAns.value = (inpAddAns.value || '') + val;
+      });
+    });
+    document.querySelector('.numpad-clear').addEventListener('click', () => {
+      inpAddAns.value = '';
+    });
+
+    // Addition Level Buttons
+    document.querySelectorAll('.add-lvl-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.add-lvl-btn').forEach(b => {
+          b.className = "add-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]";
+        });
+        btn.className = "add-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-blue-600 text-white";
+        const lvl = parseInt(btn.getAttribute('data-lvl'));
+        if (lvl === 1) {
+          addProbs = [{ n1: 3, n2: 2, icon: '🍎' }, { n1: 4, n2: 4, icon: '🌟' }, { n1: 5, n2: 3, icon: '🐱' }, { n1: 6, n2: 2, icon: '🎈' }, { n1: 7, n2: 2, icon: '🍪' }];
+        } else if (lvl === 2) {
+          addProbs = [{ n1: 7, n2: 6, icon: '🌟' }, { n1: 8, n2: 5, icon: '🍎' }, { n1: 9, n2: 4, icon: '🐱' }, { n1: 8, n2: 8, icon: '🎈' }, { n1: 9, n2: 7, icon: '🍪' }];
+        } else {
+          addProbs = [{ n1: 10, n2: 5, icon: '🌟' }, { n1: 12, n2: 4, icon: '🍎' }, { n1: 14, n2: 3, icon: '🐱' }, { n1: 11, n2: 7, icon: '🎈' }, { n1: 15, n2: 5, icon: '🍪' }];
+        }
+        loadAdd(0);
+      });
+    });
+
+    document.getElementById('btnAddRandom').addEventListener('click', () => {
+      const a = Math.floor(Math.random() * 8) + 2;
+      const b = Math.floor(Math.random() * 7) + 1;
+      const icons = ['🍎', '🌟', '🐱', '🎈', '🍪', '🌸', '🍕'];
+      addProbs[addIdx] = { n1: a, n2: b, icon: icons[Math.floor(Math.random() * icons.length)] };
+      loadAdd(addIdx);
+    });
+
+
+    // ----------------- 3B. SUBTRACTION SAFARI (FOR 6yo) -----------------
+    const defaultSubProbs = [
+      { n1: 6, n2: 2, icon: '🎈' },
+      { n1: 7, n2: 3, icon: '🍪' },
+      { n1: 8, n2: 4, icon: '🍎' },
+      { n1: 9, n2: 5, icon: '🌟' },
+      { n1: 10, n2: 3, icon: '🐱' }
+    ];
+    let customSubProbs = JSON.parse(localStorage.getItem('custom_math_sub')) || [];
+    let subProbs = customSubProbs.length > 0 ? customSubProbs : defaultSubProbs;
+
+    let subIdx = 0, subMistakes = 0;
+    const subNum1 = document.getElementById('subNum1'), subNum2 = document.getElementById('subNum2');
+    const inpSubAns = document.getElementById('inpSubAns'), subVisualBox = document.getElementById('subVisualBox');
+    const btnSubCheck = document.getElementById('btnSubCheck'), btnSubNext = document.getElementById('btnSubNext');
+    const subCoachMsg = document.getElementById('subCoachMsg'), subSpdBadge = document.getElementById('subSpdBadge');
+    const subProgress = document.getElementById('subProgress');
+
+    function renderSubVisual(n1, n2, icon = '🎈') {
+      subVisualBox.innerHTML = '';
+      const container = document.createElement('div');
+      container.className = "flex items-center gap-1.5 text-2xl flex-wrap justify-center";
+      
+      for (let i = 0; i < n1; i++) {
+        const item = document.createElement('span');
+        if (i >= n1 - n2) {
+          item.className = "relative opacity-40";
+          item.innerHTML = `${icon}<span class="absolute inset-0 flex items-center justify-center text-rose-500 font-bold text-sm">✖</span>`;
+        } else {
+          item.innerHTML = icon;
+        }
+        container.appendChild(item);
+      }
+      subVisualBox.appendChild(container);
+    }
+
+    function loadSub(i) {
+      subIdx = i % subProbs.length;
+      subMistakes = 0;
+      const p = subProbs[subIdx];
+      subNum1.textContent = p.n1;
+      subNum2.textContent = p.n2;
+      inpSubAns.value = '';
+      inpSubAns.classList.remove('border-emerald-500', 'bg-emerald-500/20', 'border-rose-500');
+      btnSubCheck.classList.remove('hidden');
+      btnSubNext.classList.add('hidden');
+      subSpdBadge.classList.add('hidden');
+      subProgress.textContent = `Problem ${subIdx+1} of ${subProbs.length}`;
+      renderSubVisual(p.n1, p.n2, p.icon || '🎈');
+      subCoachMsg.innerHTML = `Start with <b>${p.n1}</b> items. <b>${p.n2}</b> have been crossed out ✖! How many are still left?`;
+      startMathTimer();
+    }
+
+    function checkSub() {
+      const p = subProbs[subIdx];
+      const expected = p.n1 - p.n2;
+      const userAns = parseInt(inpSubAns.value);
+
+      if (userAns === expected) {
+        clearInterval(mathTimerInterval);
+        const sec = Math.max(1, Math.floor((Date.now() - mStart)/1000));
+        addStar(2);
+        inpSubAns.classList.add('border-emerald-500', 'bg-emerald-500/20', 'pop');
+        btnSubCheck.classList.add('hidden');
+        btnSubNext.classList.remove('hidden');
+
+        const grade = subMistakes === 0 ? "A+" : subMistakes <= 1 ? "A" : "A-";
+        logTestResult('Subtraction', `${p.n1} - ${p.n2} Subtraction`, `${p.n1}-${p.n2}=${expected} in ${sec}s`, grade);
+
+        subSpdBadge.classList.remove('hidden');
+        subSpdBadge.innerHTML = `&#127894;&#65039; <b>Subtraction Logged: Grade ${grade}</b> (${sec}s) +2 Stars! Saved to Target Bank!`;
+        subCoachMsg.innerHTML = `&#127881; <b>GREAT JOB NYRAH!</b> ${p.n1} - ${p.n2} = <b>${expected}</b>!`;
+        speakText(`Super job Nyrah! ${p.n1} minus ${p.n2} equals ${expected}! Grade ${grade}!`);
+      } else {
+        subMistakes++;
+        inpSubAns.classList.add('wiggle', 'border-rose-500');
+        setTimeout(() => inpSubAns.classList.remove('wiggle'), 400);
+        subCoachMsg.innerHTML = `&#129300; Count only the items that do NOT have a cross ✖ on them!`;
+      }
+    }
+
+    btnSubCheck.addEventListener('click', checkSub);
+    btnSubNext.addEventListener('click', () => loadSub(subIdx + 1));
+    document.getElementById('btnNumpadEnterSub').addEventListener('click', checkSub);
+
+    // Subtraction Numpad
+    document.querySelectorAll('.numpad-sub-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        inpSubAns.value = (inpSubAns.value || '') + btn.getAttribute('data-val');
+      });
+    });
+    document.querySelector('.numpad-sub-clear').addEventListener('click', () => {
+      inpSubAns.value = '';
+    });
+
+    document.querySelectorAll('.sub-lvl-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sub-lvl-btn').forEach(b => {
+          b.className = "sub-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]";
+        });
+        btn.className = "sub-lvl-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-amber-600 text-white";
+        const lvl = parseInt(btn.getAttribute('data-lvl'));
+        if (lvl === 1) {
+          subProbs = [{ n1: 5, n2: 2, icon: '🎈' }, { n1: 6, n2: 3, icon: '🍪' }, { n1: 7, n2: 2, icon: '🍎' }, { n1: 8, n2: 5, icon: '🌟' }, { n1: 9, n2: 4, icon: '🐱' }];
+        } else {
+          subProbs = [{ n1: 12, n2: 4, icon: '🎈' }, { n1: 14, n2: 5, icon: '🍪' }, { n1: 15, n2: 6, icon: '🍎' }, { n1: 16, n2: 7, icon: '🌟' }, { n1: 18, n2: 8, icon: '🐱' }];
+        }
+        loadSub(0);
+      });
+    });
+
+    document.getElementById('btnSubRandom').addEventListener('click', () => {
+      const a = Math.floor(Math.random() * 8) + 3;
+      const b = Math.floor(Math.random() * (a - 1)) + 1;
+      const icons = ['🎈', '🍪', '🍎', '🌟', '🐱', '🌸'];
+      subProbs[subIdx] = { n1: a, n2: b, icon: icons[Math.floor(Math.random() * icons.length)] };
+      loadSub(subIdx);
+    });
+
+
+    // ----------------- 3C. MULTIPLICATION WONDER (FOR 6yo) -----------------
+    const defaultMultProbs = [
+      { groups: 3, each: 2, icon: '⭐' },
+      { groups: 4, each: 2, icon: '🍎' },
+      { groups: 2, each: 5, icon: '🍪' },
+      { groups: 5, each: 2, icon: '🎈' },
+      { groups: 3, each: 3, icon: '🌸' }
+    ];
+    let customMultProbs = JSON.parse(localStorage.getItem('custom_math_mult')) || [];
+    let multProbs = customMultProbs.length > 0 ? customMultProbs : defaultMultProbs;
+
+    let multIdx = 0, multMistakes = 0;
+    const multNum1 = document.getElementById('multNum1'), multNum2 = document.getElementById('multNum2');
+    const inpMultAns = document.getElementById('inpMultAns'), multVisualBox = document.getElementById('multVisualBox');
+    const btnMultCheck = document.getElementById('btnMultCheck'), btnMultNext = document.getElementById('btnMultNext');
+    const multCoachMsg = document.getElementById('multCoachMsg'), multSpdBadge = document.getElementById('multSpdBadge');
+    const multProgress = document.getElementById('multProgress');
+
+    function renderMultVisual(groups, each, icon = '⭐') {
+      multVisualBox.innerHTML = '';
+      for (let g = 0; g < groups; g++) {
+        const box = document.createElement('div');
+        box.className = "p-2 bg-[var(--bg)] border-2 border-purple-500/40 rounded-xl flex items-center gap-1 shadow-sm";
+        for (let e = 0; e < each; e++) {
+          box.innerHTML += `<span class="text-xl">${icon}</span>`;
+        }
+        multVisualBox.appendChild(box);
+      }
+    }
+
+    function loadMult(i) {
+      multIdx = i % multProbs.length;
+      multMistakes = 0;
+      const p = multProbs[multIdx];
+      multNum1.textContent = p.groups;
+      multNum2.textContent = p.each;
+      inpMultAns.value = '';
+      inpMultAns.classList.remove('border-emerald-500', 'bg-emerald-500/20', 'border-rose-500');
+      btnMultCheck.classList.remove('hidden');
+      btnMultNext.classList.add('hidden');
+      multSpdBadge.classList.add('hidden');
+      multProgress.textContent = `Problem ${multIdx+1} of ${multProbs.length}`;
+      renderMultVisual(p.groups, p.each, p.icon || '⭐');
+      multCoachMsg.innerHTML = `Multiplication is <b>Equal Groups</b>! Look: <b>${p.groups} groups of ${p.each}</b>. Count them all up!`;
+      startMathTimer();
+    }
+
+    function checkMult() {
+      const p = multProbs[multIdx];
+      const expected = p.groups * p.each;
+      const userAns = parseInt(inpMultAns.value);
+
+      if (userAns === expected) {
+        clearInterval(mathTimerInterval);
+        const sec = Math.max(1, Math.floor((Date.now() - mStart)/1000));
+        addStar(2);
+        inpMultAns.classList.add('border-emerald-500', 'bg-emerald-500/20', 'pop');
+        btnMultCheck.classList.add('hidden');
+        btnMultNext.classList.remove('hidden');
+
+        const grade = multMistakes === 0 ? "A+" : multMistakes <= 1 ? "A" : "A-";
+        logTestResult('Multiplication', `${p.groups} × ${p.each} Multiplication`, `${p.groups}×${p.each}=${expected} in ${sec}s (${p.groups} groups of ${p.each})`, grade);
+
+        multSpdBadge.classList.remove('hidden');
+        multSpdBadge.innerHTML = `&#127894;&#65039; <b>Multiplication Logged: Grade ${grade}</b> (${sec}s) +2 Stars! Saved to Target Bank!`;
+        multCoachMsg.innerHTML = `&#127881; <b>BRILLIANT NYRAH!</b> ${p.groups} &times; ${p.each} = <b>${expected}</b>!`;
+        speakText(`Sensational work Nyrah! ${p.groups} times ${p.each} equals ${expected}! Grade ${grade}!`);
+      } else {
+        multMistakes++;
+        inpMultAns.classList.add('wiggle', 'border-rose-500');
+        setTimeout(() => inpMultAns.classList.remove('wiggle'), 400);
+        multCoachMsg.innerHTML = `&#129300; Count each group of items: ${p.each} + ${p.each}... What is the total?`;
+      }
+    }
+
+    btnMultCheck.addEventListener('click', checkMult);
+    btnMultNext.addEventListener('click', () => loadMult(multIdx + 1));
+    document.getElementById('btnNumpadEnterMult').addEventListener('click', checkMult);
+
+    // Multiplication Numpad
+    document.querySelectorAll('.numpad-mult-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        inpMultAns.value = (inpMultAns.value || '') + btn.getAttribute('data-val');
+      });
+    });
+    document.querySelector('.numpad-mult-clear').addEventListener('click', () => {
+      inpMultAns.value = '';
+    });
+
+    document.querySelectorAll('.mult-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mult-tab-btn').forEach(b => {
+          b.className = "mult-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--bg)] text-[var(--muted)]";
+        });
+        btn.className = "mult-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-purple-600 text-white";
+        const table = parseInt(btn.getAttribute('data-table'));
+        if (table === 2) {
+          multProbs = [{ groups: 2, each: 2, icon: '⭐' }, { groups: 3, each: 2, icon: '🍎' }, { groups: 4, each: 2, icon: '🍪' }, { groups: 5, each: 2, icon: '🎈' }, { groups: 6, each: 2, icon: '🌸' }];
+        } else if (table === 5) {
+          multProbs = [{ groups: 1, each: 5, icon: '🪙' }, { groups: 2, each: 5, icon: '🪙' }, { groups: 3, each: 5, icon: '🪙' }, { groups: 4, each: 5, icon: '🪙' }, { groups: 5, each: 5, icon: '🪙' }];
+        } else if (table === 10) {
+          multProbs = [{ groups: 1, each: 10, icon: '🌟' }, { groups: 2, each: 10, icon: '🌟' }, { groups: 3, each: 10, icon: '🌟' }, { groups: 4, each: 10, icon: '🌟' }, { groups: 5, each: 10, icon: '🌟' }];
+        } else {
+          multProbs = [{ groups: 2, each: 3, icon: '🌸' }, { groups: 3, each: 3, icon: '🌸' }, { groups: 4, each: 3, icon: '🌸' }, { groups: 5, each: 3, icon: '🌸' }];
+        }
+        loadMult(0);
+      });
+    });
+
+    document.getElementById('btnMultRandom').addEventListener('click', () => {
+      const g = Math.floor(Math.random() * 4) + 2;
+      const e = [2, 3, 5, 10][Math.floor(Math.random() * 4)];
+      const icons = ['⭐', '🍎', '🍪', '🎈', '🌸', '🍕'];
+      multProbs[multIdx] = { groups: g, each: e, icon: icons[Math.floor(Math.random() * icons.length)] };
+      loadMult(multIdx);
+    });
+
+    // Start default Addition
+    loadAdd(0);
+
+
+    // ================= 4. READING COMPREHENSION (FOR 6yo NYRAH) =================
+    const storiesData = [
+      {
+        title: "Bella the Puppy's Rainbow Day",
+        level: "Level 1 Story",
+        paragraphs: [
+          "Bella is a happy golden puppy with soft floppy ears. One sunny afternoon after the rain, Bella saw a bright rainbow stretching across the sky. She wagged her tail and trotted into the green garden.",
+          "Near the rose bush, Bella spotted a shiny red ball. Suddenly, a little calico kitten named Mia peeked out from behind a flowerpot. Mia was shy, but Bella gently nudged the ball toward her with her wet nose.",
+          "Mia tapped the ball with her paw and purred. The two little friends rolled the ball back and forth until the sunset. Bella learned that sharing toys is the best way to make a brand new friend!"
+        ],
+        quiz: [
+          { q: "What did Bella see in the sky after the rain?", options: ["A bright rainbow 🌈", "A dark storm cloud ☁️", "An airplane ✈️"], correct: 0 },
+          { q: "Who did Bella meet near the rose bush?", options: ["A shy kitten named Mia 🐱", "A big brown bear 🐻", "A quacking duck 🦆"], correct: 0 },
+          { q: "What did Bella learn about making friends?", options: ["Sharing toys is the best way to make friends 💖", "Puppies should play alone", "Never go outside after rain"], correct: 0 }
+        ]
+      },
+      {
+        title: "Leo the Brave Little Lion",
+        level: "Level 1 Story",
+        paragraphs: [
+          "Leo was a small lion cub with a fluffy mane like a golden dandelion. All the big lions loved to roar loudly across the grassy savanna. Leo tried to roar too, but his voice was a tiny 'squeak-squeak!'",
+          "One morning, a baby monkey named Kiki dropped her favorite yellow banana into a thorny bush. Kiki was crying because she was too scared of the prickly thorns.",
+          "Leo did not have a loud roar, but he was patient and gentle. He carefully pushed the branches aside with a smooth stick so Kiki could reach her banana safely. All the savanna animals cheered! Leo proved that true bravery is being kind and helping others."
+        ],
+        quiz: [
+          { q: "What sound did Leo make when he tried to roar?", options: ["A loud thunder sound", "A tiny 'squeak-squeak' 🐭", "A funny whistle 🎵"], correct: 1 },
+          { q: "What problem did Kiki the baby monkey have?", options: ["Her banana fell into a thorny bush 🍌", "She lost her sunglasses", "She forgot how to climb"], correct: 0 },
+          { q: "What did Leo show the savanna animals about bravery?", options: ["True bravery is being kind and helping others 🌟", "Bravery means roaring the loudest", "Bravery is sleeping all day"], correct: 0 }
+        ]
+      },
+      {
+        title: "Pip the Space Hamster",
+        level: "Level 2 Story",
+        paragraphs: [
+          "Pip was a chubby little hamster who loved to dream big. Every evening, he looked through his toy telescope at the glowing moon and wondered what it tasted like.",
+          "Pip built his very own spaceship out of an old shoebox, shiny silver foil, and colorful bottle caps. He put on a clear plastic cup as a space helmet and invited his teddy bear to be his co-pilot.",
+          "'Five, four, three, two, one... BLAST OFF!' shouted Pip. He zoomed his spaceship across the living room carpet, dodged giant pillow mountains, and landed safely on sofa planet. With a big imagination, you can explore the whole universe!"
+        ],
+        quiz: [
+          { q: "What did Pip build his spaceship out of?", options: ["A shoebox, silver foil, and bottle caps 🚀", "Real metal and jet engines", "Popsicle sticks and glue"], correct: 0 },
+          { q: "Who was Pip's co-pilot on the space flight?", options: ["His teddy bear 🧸", "A real astronaut", "A robot puppy"], correct: 0 },
+          { q: "Where did Pip's spaceship land safely?", options: ["On sofa planet 🛋️", "In the bathtub", "On the kitchen table"], correct: 0 }
+        ]
+      }
+    ];
+
+    let currentStoryIdx = 0, currentQuestionIdx = 0, readingScore = 0;
+    const readTitle = document.getElementById('readTitle'), storyLevelBadge = document.getElementById('storyLevelBadge'), storyNumberBadge = document.getElementById('storyNumberBadge'), readPassage = document.getElementById('readPassage');
+    const qNumBadge = document.getElementById('qNumBadge'), quizQuestionText = document.getElementById('quizQuestionText'), quizOptions = document.getElementById('quizOptions'), readQuizFeedback = document.getElementById('readQuizFeedback');
+
+    function loadStory(sIdx) {
+      currentStoryIdx = sIdx % storiesData.length;
+      currentQuestionIdx = 0;
+      readingScore = 0;
+      const s = storiesData[currentStoryIdx];
+      
+      readTitle.textContent = s.title;
+      storyLevelBadge.textContent = s.level;
+      storyNumberBadge.textContent = `Story ${currentStoryIdx + 1} of ${storiesData.length}`;
+      
+      readPassage.innerHTML = '';
+      s.paragraphs.forEach(p => {
+        const pEl = document.createElement('p');
+        pEl.textContent = p;
+        readPassage.appendChild(pEl);
+      });
+
+      loadQuestion(0);
+    }
+
+    function loadQuestion(qIdx) {
+      currentQuestionIdx = qIdx;
+      const story = storiesData[currentStoryIdx];
+      const q = story.quiz[currentQuestionIdx];
+
+      qNumBadge.textContent = `Question ${currentQuestionIdx + 1} of ${story.quiz.length}`;
+      quizQuestionText.textContent = q.q;
+      quizOptions.innerHTML = '';
+      readQuizFeedback.classList.add('hidden');
+
+      q.options.forEach((opt, oIdx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3.5 rounded-xl bg-[var(--bg)] border-2 border-[var(--border)] hover:border-purple-400 text-sm font-semibold transition-all flex items-center justify-between";
+        btn.innerHTML = `<span>${opt}</span><span class="text-xs text-[var(--muted)] font-mono">#${oIdx+1}</span>`;
+        btn.addEventListener('click', () => checkQuestion(oIdx));
+        quizOptions.appendChild(btn);
+      });
+    }
+
+    function checkQuestion(selectedIdx) {
+      const story = storiesData[currentStoryIdx];
+      const q = story.quiz[currentQuestionIdx];
+      readQuizFeedback.classList.remove('hidden');
+
+      if (selectedIdx === q.correct) {
+        readingScore++;
+        addStar(1);
+        readQuizFeedback.className = "p-3 rounded-xl text-xs font-bold bg-emerald-500/20 text-emerald-400";
+        readQuizFeedback.innerHTML = `&#127881; <b>Spot on Nyrah! Correct!</b> (+1 Star!)`;
+        speakText("Correct answer! Great reading Nyrah!");
+
+        setTimeout(() => {
+          if (currentQuestionIdx < story.quiz.length - 1) {
+            loadQuestion(currentQuestionIdx + 1);
+          } else {
+            const rGrade = readingScore === 3 ? "A+" : readingScore === 2 ? "A" : "B+";
+            logTestResult('Reading', `${story.title} Quiz`, `${readingScore}/3 Questions Correct on Story Comprehension`, rGrade);
+            readQuizFeedback.innerHTML = `&#127942; <b>Test Saved to Target Bank: Grade ${rGrade}</b> (${readingScore}/3 Correct)!`;
+            speakText(`Awesome reading comprehension Nyrah! Grade ${rGrade} recorded!`);
+          }
+        }, 1200);
+      } else {
+        readQuizFeedback.className = "p-3 rounded-xl text-xs font-bold bg-rose-500/20 text-rose-400";
+        readQuizFeedback.innerHTML = "&#129300; Almost! Re-read the story paragraph and try again!";
+      }
+    }
+
+    document.getElementById('btnStorySelectPrev').addEventListener('click', () => {
+      if (currentStoryIdx > 0) loadStory(currentStoryIdx - 1);
+    });
+    document.getElementById('btnStorySelectNext').addEventListener('click', () => {
+      if (currentStoryIdx < storiesData.length - 1) loadStory(currentStoryIdx + 1);
+    });
+    document.getElementById('btnReadAloud').addEventListener('click', () => {
+      const textToRead = storiesData[currentStoryIdx].paragraphs.join(' ');
+      speakText(textToRead);
+    });
+
+    loadStory(0);
+
+
+    // ================= 5. VOCABULARY BUILDER (FOR 6yo NYRAH) =================
+    const defaultVocab = [
+      { w: "Curious", part: "Adjective", def: "Always wanting to ask questions, explore, and learn new things!", ex: "Curious Nyrah peeked inside the mystery gift box with a big smile.", matchPrompt: "Wanting to explore, ask questions, and learn" },
+      { w: "Courageous", part: "Adjective", def: "Super brave and strong in your heart, even when trying something new!", ex: "Nyrah was courageous when she rode her two-wheel bike for the first time.", matchPrompt: "Brave and strong, even when something feels new" },
+      { w: "Enormous", part: "Adjective", def: "Gigantic, huge, and super big like an elephant or a castle!", ex: "They built an enormous sandcastle with tall towers at the beach.", matchPrompt: "Gigantic, huge, and super big" },
+      { w: "Brilliant", part: "Adjective", def: "Extremely smart, clever, or shining bright like a star!", ex: "Nyrah had a brilliant idea to build a cozy blanket fort.", matchPrompt: "Extremely smart, clever, and shining bright" },
+      { w: "Delightful", part: "Adjective", def: "Very happy, charming, and wonderful to experience!", ex: "We had a delightful picnic eating sweet strawberries in the park.", matchPrompt: "Super fun, happy, and bringing lots of smiles" },
+      { w: "Persevere", part: "Verb", def: "To keep trying your best and never give up when something is tricky!", ex: "If a math puzzle is hard, persevere and you will solve it!", matchPrompt: "To keep trying and never give up" },
+      { w: "Generous", part: "Adjective", def: "Loving to share your toys, smiles, and treats with others!", ex: "The generous girl shared her colorful crayons with her classmate.", matchPrompt: "Happy to share things and be kind to others" },
+      { w: "Adventure", part: "Noun", def: "An exciting, fun journey where you discover amazing things!", ex: "Going camping in the backyard was our favorite weekend adventure.", matchPrompt: "An exciting journey full of fun discoveries" }
+    ];
+    let customVocab = JSON.parse(localStorage.getItem('custom_vocab')) || [];
+    let vocabList = customVocab.length > 0 ? customVocab : defaultVocab;
+
+    let vIdx = 0, vocabCorrectCount = 0;
+    const vWord = document.getElementById('vWord'), vWordPart = document.getElementById('vWordPart'), vDef = document.getElementById('vDef'), vExample = document.getElementById('vExample'), vIndex = document.getElementById('vIndex');
+    const vChallengePrompt = document.getElementById('vChallengePrompt'), vocabQuizChoices = document.getElementById('vocabQuizChoices'), vocabFeedback = document.getElementById('vocabFeedback');
+
+    function loadVocab(i) {
+      vIdx = i % vocabList.length;
+      const v = vocabList[vIdx];
+      vWord.textContent = v.w;
+      vWordPart.textContent = v.part;
+      vDef.textContent = v.def;
+      vExample.textContent = `"${v.ex}"`;
+      vIndex.textContent = `${vIdx + 1} / ${vocabList.length}`;
+
+      vChallengePrompt.innerHTML = `Which word means: <b>"${v.matchPrompt || v.def}"</b>?`;
+      vocabQuizChoices.innerHTML = '';
+      vocabFeedback.classList.add('hidden');
+
+      const choices = [v.w];
+      while (choices.length < Math.min(3, vocabList.length)) {
+        const rand = vocabList[Math.floor(Math.random() * vocabList.length)].w;
+        if (!choices.includes(rand)) choices.push(rand);
+      }
+      choices.sort(() => Math.random() - 0.5);
+
+      choices.forEach(ch => {
+        const b = document.createElement('button');
+        b.className = "w-full text-left p-3 rounded-xl bg-[var(--bg)] border-2 border-[var(--border)] hover:border-emerald-400 text-sm font-bold transition-all";
+        b.textContent = ch;
+        b.addEventListener('click', () => {
+          vocabFeedback.classList.remove('hidden');
+          if (ch === v.w) {
+            vocabCorrectCount++;
+            addStar(1);
+            vocabFeedback.className = "mt-3 p-3 rounded-xl text-xs font-bold bg-emerald-500/20 text-emerald-400";
+            vocabFeedback.innerHTML = `&#127881; <b>Spot on Nyrah!</b> "${v.w}" means ${v.def} (+1 Star!)`;
+            speakText(`Yes! ${v.w}! Wonderful vocabulary work Nyrah!`);
+
+            if (vocabCorrectCount >= 5) {
+              logTestResult('Vocab', "Power Words Detective Quiz", `${vocabCorrectCount} Words Mastered on Detective Challenge`, "A+");
+            }
+          } else {
+            vocabFeedback.className = "mt-3 p-3 rounded-xl text-xs font-bold bg-rose-500/20 text-rose-400";
+            vocabFeedback.innerHTML = "Keep guessing! Listen to the pronunciation!";
+          }
+        });
+        vocabQuizChoices.appendChild(b);
+      });
+    }
+
+    document.getElementById('btnVocabSpeak').addEventListener('click', () => {
+      speakText(`${vocabList[vIdx].w}. It means: ${vocabList[vIdx].def}`);
+    });
+    document.getElementById('btnPrevWord').addEventListener('click', () => { if (vIdx > 0) loadVocab(vIdx - 1); });
+    document.getElementById('btnNextWord').addEventListener('click', () => { if (vIdx < vocabList.length - 1) loadVocab(vIdx + 1); });
+    loadVocab(0);
+
+    // Parent Studio: Add Word
+    document.getElementById('btnAddParentVocab').addEventListener('click', () => {
+      const w = document.getElementById('pVocabWord').value.trim();
+      const def = document.getElementById('pVocabDef').value.trim();
+      const ex = document.getElementById('pVocabEx').value.trim();
+      if (!w || !def) { alert("Please enter both the word and kid definition!"); return; }
+
+      customVocab.unshift({ w: w, part: "New Word", def: def, ex: ex || `Nyrah used the word ${w} in her speech!`, matchPrompt: def });
+      localStorage.setItem('custom_vocab', JSON.stringify(customVocab));
+      vocabList = customVocab;
+      loadVocab(0);
+      document.getElementById('pVocabWord').value = '';
+      document.getElementById('pVocabDef').value = '';
+      document.getElementById('pVocabEx').value = '';
+      alert(`Word "${w}" added to Nyrah's vocabulary list!`);
+    });
+
+
+    // ================= 6. PUBLIC SPEAKING & SPEECH STUDIO =================
+    const speechTopics = [
+      {
+        title: "Show & Tell: My Favorite Thing",
+        prompt: "Hold up your favorite toy, book, or special item! Tell us: 1) What is it? 2) Where did you get it? 3) Why do you love it so much?"
+      },
+      {
+        title: "My Secret Superpower",
+        prompt: "If you could have any superpower in the whole world (flying, talking to animals, invisibility, super speed), what would it be and how would you use it to help people?"
+      },
+      {
+        title: "My Happiest Adventure Ever",
+        prompt: "Tell us about a day that made you smile so much! Where were you, who was with you, and what fun things did you do?"
+      },
+      {
+        title: "If I Could Be Any Animal",
+        prompt: "Imagine waking up tomorrow as any animal! What animal would you be, what sounds would you make, and where would you go explore?"
+      },
+      {
+        title: "Teach the Audience Something You Love!",
+        prompt: "You are the teacher today! Teach us how to do something you know well (like drawing a rainbow, making a silly dance, or telling a funny joke)!"
+      }
+    ];
+    let speechTopicIdx = 0;
+    const speechTopicTitle = document.getElementById('speechTopicTitle'), speechTopicPrompt = document.getElementById('speechTopicPrompt');
+
+    document.getElementById('btnNewSpeechTopic').addEventListener('click', () => {
+      speechTopicIdx = (speechTopicIdx + 1) % speechTopics.length;
+      const t = speechTopics[speechTopicIdx];
+      speechTopicTitle.textContent = t.title;
+      speechTopicPrompt.textContent = `"${t.prompt}"`;
+    });
+
+    const twisters = [
+      "Red lorry, yellow lorry, red lorry, yellow lorry!",
+      "Fuzzy Wuzzy was a bear, Fuzzy Wuzzy had no hair, Fuzzy Wuzzy wasn't fuzzy, was he?",
+      "Six silly seals singing softly in the sea!",
+      "She sells sea shells by the sea shore!"
+    ];
+    let twisterIdx = 0;
+    const twisterText = document.getElementById('twisterText');
+    document.getElementById('btnListenTwister').addEventListener('click', () => { speakText(twisters[twisterIdx]); });
+    document.getElementById('btnNextTwister').addEventListener('click', () => {
+      twisterIdx = (twisterIdx + 1) % twisters.length;
+      twisterText.textContent = `"${twisters[twisterIdx]}"`;
+    });
+
+    let speechDuration = 30;
+    let sTimer = null, sTimeLeft = 30;
+    const speechTimerEl = document.getElementById('speechTimer'), btnStartSpeechTimer = document.getElementById('btnStartSpeechTimer');
+    const speechStatusMsg = document.getElementById('speechStatusMsg'), speechCelebrationBox = document.getElementById('speechCelebrationBox');
+
+    document.querySelectorAll('.speech-len-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.speech-len-btn').forEach(b => {
+          b.className = "speech-len-btn px-3 py-1 rounded-lg text-xs font-bold bg-[var(--bg)] text-[var(--muted)]";
+        });
+        btn.className = "speech-len-btn px-3 py-1 rounded-lg text-xs font-black bg-rose-600 text-white";
+        speechDuration = parseInt(btn.getAttribute('data-sec'));
+        sTimeLeft = speechDuration;
+        speechTimerEl.textContent = `00:${String(sTimeLeft).padStart(2,'0')}`;
+      });
+    });
+
+    btnStartSpeechTimer.addEventListener('click', () => {
+      if (sTimer) clearInterval(sTimer);
+      sTimeLeft = speechDuration;
+      speechCelebrationBox.classList.add('hidden');
+      btnStartSpeechTimer.textContent = "Presentation in Progress ⏱️";
+      speechStatusMsg.textContent = "You're doing great Nyrah! Look at your audience and speak with pride!";
+      speakText("Ready, set, speak! You've got this Nyrah!");
+
+      sTimer = setInterval(() => {
+        sTimeLeft--;
+        speechTimerEl.textContent = `00:${String(sTimeLeft).padStart(2,'0')}`;
+        if (sTimeLeft <= 0) {
+          clearInterval(sTimer);
+          addStar(3);
+          speechTimerEl.textContent = "Time's Up! 🌟";
+          btnStartSpeechTimer.textContent = "Start Next Speech Test";
+          speechStatusMsg.textContent = "Magnificent speech presentation! You were loud, clear, and confident!";
+          
+          logTestResult('Speaking', `Public Speech: ${speechTopicTitle.textContent}`, `Completed ${speechDuration}s presentation with confidence and clear voice`, "A+");
+          
+          speechCelebrationBox.classList.remove('hidden');
+          speechCelebrationBox.innerHTML = `&#127881; <b>Outstanding Speech Nyrah! Grade A+ Recorded!</b> (+3 Stars to Target Bank!)`;
+          speakText("Time is up! Sensational presentation Nyrah! Grade A plus has been recorded in your Target Rewards bank!");
+        }
+      }, 1000);
+    });
+
+
+    // ================= 7. GRADEBOOK & STATS RENDERING =================
+    function updateStats() {
+      document.getElementById('statTotalTests').textContent = testHistory.length;
+      document.getElementById('statStars').textContent = stars;
+      updateTargetRewards();
+    }
+
+    function renderTestHistoryTable(filter = 'all') {
+      const tbody = document.getElementById('testLogTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = filter === 'all' ? testHistory : testHistory.filter(t => t.subject.toLowerCase() === filter.toLowerCase());
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-xs text-[var(--muted)] font-sans">No test records found for this filter. Complete an activity to see it appear here!</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[var(--card)] transition-colors";
+        
+        let subjColor = "text-blue-400 bg-blue-500/10";
+        if (t.subject === 'Subtraction') subjColor = "text-amber-400 bg-amber-500/10";
+        if (t.subject === 'Multiplication') subjColor = "text-purple-400 bg-purple-500/10";
+        if (t.subject === 'Reading') subjColor = "text-purple-400 bg-purple-500/10";
+        if (t.subject === 'Vocab') subjColor = "text-emerald-400 bg-emerald-500/10";
+        if (t.subject === 'Speaking') subjColor = "text-rose-400 bg-rose-500/10";
+
+        tr.innerHTML = `
+          <td class="p-3 text-[var(--muted)] whitespace-nowrap">${t.date}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded font-bold text-[10px] ${subjColor}">${t.subject}</span></td>
+          <td class="p-3 font-bold text-[var(--fg)]">${t.title}</td>
+          <td class="p-3 text-[var(--muted)]">${t.metric}</td>
+          <td class="p-3 text-right font-black text-emerald-400 text-sm">${t.grade}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Filter Buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.className = "filter-btn px-3 py-1 rounded-lg bg-[var(--bg)] text-[var(--muted)]";
+        });
+        btn.className = "filter-btn px-3 py-1 rounded-lg bg-blue-600 text-white";
+        renderTestHistoryTable(btn.getAttribute('data-filter'));
+      });
+    });
+
+    // Export CSV Spreadsheet
+    document.getElementById('btnExportCSV').addEventListener('click', () => {
+      let csv = "Date,Subject,Test Activity,Performance Metric,Grade\n";
+      testHistory.forEach(t => {
+        csv += `"${t.date}","${t.subject}","${t.title}","${t.metric}","${t.grade}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Nyrah_Academy_Gradebook_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    });
+
+    // Master Report Card
+    function showMasterReportCard() {
+      panels.forEach(p => p.classList.add('hidden'));
+      document.getElementById('sect-report-card').classList.remove('hidden');
+
+      const list = document.getElementById('reportSubjectList');
+      list.innerHTML = '';
+
+      const subjects = [
+        { name: '➕ Addition Arena (Visual Counters & Tens)', sub: 'Addition' },
+        { name: '➖ Subtraction Safari (Takeaway & Difference)', sub: 'Subtraction' },
+        { name: '✖️ Multiplication Wonder (Equal Groups & Times Tables)', sub: 'Multiplication' },
+        { name: '📖 Reading Comprehension (Story Mysteries & Details)', sub: 'Reading' },
+        { name: '🧠 Power Vocabulary (Sight Words & Word Detective)', sub: 'Vocab' },
+        { name: '🎙️ Public Speaking (Show & Tell, Fluency & Voice)', sub: 'Speaking' }
+      ];
+
+      subjects.forEach(s => {
+        const tests = testHistory.filter(t => t.subject === s.sub);
+        const lastGrade = tests.length > 0 ? tests[0].grade : 'A+';
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]";
+        row.innerHTML = `
+          <div>
+            <div class="font-bold text-[var(--fg)]">${s.name}</div>
+            <div class="text-[10px] text-[var(--muted)]">${tests.length} tests recorded &bull; Current Standing</div>
+          </div>
+          <span class="text-base font-black text-emerald-400">${lastGrade}</span>
+        `;
+        list.appendChild(row);
+      });
+
+      triggerConfetti();
+    }
+
+
+    // ================= 8. PARENT & UNCLE CUSTOM MATH CREATOR =================
+    const pMathType = document.getElementById('pMathType');
+    const pMathOpSymbol = document.getElementById('pMathOpSymbol');
+    const btnAddParentMath = document.getElementById('btnAddParentMath');
+    const parentMathAddedMsg = document.getElementById('parentMathAddedMsg');
+    const customMathList = document.getElementById('customMathList');
+
+    pMathType.addEventListener('change', () => {
+      const val = pMathType.value;
+      if (val === 'add') pMathOpSymbol.textContent = '+';
+      if (val === 'sub') pMathOpSymbol.textContent = '-';
+      if (val === 'mult') pMathOpSymbol.textContent = '×';
+    });
+
+    btnAddParentMath.addEventListener('click', () => {
+      const type = pMathType.value;
+      const a = parseInt(document.getElementById('pMathA').value);
+      const b = parseInt(document.getElementById('pMathB').value);
+      if (isNaN(a) || isNaN(b)) { alert("Please enter both numbers!"); return; }
+
+      if (type === 'add') {
+        customAddProbs.unshift({ n1: a, n2: b, icon: '🌟' });
+        localStorage.setItem('custom_math_add', JSON.stringify(customAddProbs));
+        addProbs = customAddProbs;
+        loadAdd(0);
+      } else if (type === 'sub') {
+        if (a < b) { alert("For subtraction, please make the first number larger than the second!"); return; }
+        customSubProbs.unshift({ n1: a, n2: b, icon: '🎈' });
+        localStorage.setItem('custom_math_sub', JSON.stringify(customSubProbs));
+        subProbs = customSubProbs;
+        loadSub(0);
+      } else if (type === 'mult') {
+        customMultProbs.unshift({ groups: a, each: b, icon: '⭐' });
+        localStorage.setItem('custom_math_mult', JSON.stringify(customMultProbs));
+        multProbs = customMultProbs;
+        loadMult(0);
+      }
+
+      parentMathAddedMsg.classList.remove('hidden');
+      setTimeout(() => parentMathAddedMsg.classList.add('hidden'), 2500);
+      renderCustomMathList();
+    });
+
+    function renderCustomMathList() {
+      customMathList.innerHTML = '';
+      const totalCustom = customAddProbs.length + customSubProbs.length + customMultProbs.length;
+      if (totalCustom === 0) {
+        customMathList.innerHTML = '<span class="italic">Using standard 6yo curriculum. Add custom questions above!</span>';
+        return;
+      }
+
+      customAddProbs.forEach(p => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between bg-[var(--card)] p-1.5 rounded border border-[var(--border)]";
+        row.innerHTML = `<span>&#10133; Add: <b>${p.n1} + ${p.n2}</b></span><span class="text-[10px] text-blue-400 font-bold">Active</span>`;
+        customMathList.appendChild(row);
+      });
+
+      customSubProbs.forEach(p => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between bg-[var(--card)] p-1.5 rounded border border-[var(--border)]";
+        row.innerHTML = `<span>&#10134; Sub: <b>${p.n1} - ${p.n2}</b></span><span class="text-[10px] text-amber-400 font-bold">Active</span>`;
+        customMathList.appendChild(row);
+      });
+
+      customMultProbs.forEach(p => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between bg-[var(--card)] p-1.5 rounded border border-[var(--border)]";
+        row.innerHTML = `<span>&#10006; Mult: <b>${p.groups} &times; ${p.each}</b></span><span class="text-[10px] text-purple-400 font-bold">Active</span>`;
+        customMathList.appendChild(row);
+      });
+    }
+
+    document.getElementById('btnResetDefaultCurriculum').addEventListener('click', () => {
+      if (confirm("Reset curriculum to standard 6-year-old tests?")) {
+        localStorage.removeItem('custom_math_add');
+        localStorage.removeItem('custom_math_sub');
+        localStorage.removeItem('custom_math_mult');
+        localStorage.removeItem('custom_vocab');
+        customAddProbs = [];
+        customSubProbs = [];
+        customMultProbs = [];
+        customVocab = [];
+        addProbs = defaultAddProbs;
+        subProbs = defaultSubProbs;
+        multProbs = defaultMultProbs;
+        vocabList = defaultVocab;
+        loadAdd(0);
+        loadVocab(0);
+        renderCustomMathList();
+        alert("Curriculum reset to 6-year-old standards!");
+      }
+    });
+
+    document.getElementById('btnClearAllData').addEventListener('click', () => {
+      if (confirm("Are you sure you want to clear all test records and stars for Nyrah?")) {
+        testHistory = [];
+        stars = 0;
+        targetPaidCount = 0;
+        localStorage.removeItem(STORAGE_KEY_HISTORY);
+        localStorage.removeItem(STORAGE_KEY_STARS);
+        localStorage.removeItem(STORAGE_KEY_PAID);
+        academyStarsEl.textContent = 0;
+        testCountBadge.textContent = 0;
+        renderTestHistoryTable('all');
+        updateStats();
+      }
+    });
+
+    function triggerConfetti() {
+      const colors = ['#dc2626', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+      for (let i = 0; i < 40; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti-piece';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = Math.random() * 1.5 + 's';
+        c.style.animationDuration = (2.2 + Math.random() * 2) + 's';
+        document.getElementById('portalContainer').appendChild(c);
+      }
+    }
+
+    // Initial load
+    renderTestHistoryTable('all');
+    updateStats();
+    updateTargetRewards();
+  </script>
+</body>
+</html>
